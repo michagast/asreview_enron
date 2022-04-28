@@ -24,7 +24,7 @@ setup(
     ],
     entry_points={
         'asreview.models.classifiers': [
-
+            #
         ],
         'asreview.models.feature_extraction': [
             'enron = asreviewcontrib.models.feature_extraction.enron.fe:Enron',

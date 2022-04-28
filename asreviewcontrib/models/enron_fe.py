@@ -1,5 +1,5 @@
 
-from asreview.models.classifiers.base import BaseFeatureExtraction
+from asreview.models.feature_extraction.base import BaseFeatureExtraction
 
 class Enron(BaseFeatureExtraction):
     """Naive Bayes classifier

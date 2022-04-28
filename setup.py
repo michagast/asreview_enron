@@ -27,7 +27,7 @@ setup(
             #
         ],
         'asreview.models.feature_extraction': [
-            'enron = asreviewcontrib.models.feature_extraction.enron.fe:Enron',
+            'enron = asreviewcontrib.models.enron.fe:Enron',
         ],
         'asreview.models.balance': [
             # define balance strategy algorithms

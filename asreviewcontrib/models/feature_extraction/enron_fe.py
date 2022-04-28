@@ -1,6 +1,6 @@
 
 
-class Enron(BaseTrainClassifier):
+class Enron(BaseFeatureExtraction):
     """Naive Bayes classifier
 
     The Naive Bayes classifier with the default SKLearn parameters.
@@ -12,4 +12,3 @@ class Enron(BaseTrainClassifier):
     def __init__(self):
 
         super(Enron, self).__init__()
-        self._model = MultinomialNB()

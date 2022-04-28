@@ -24,10 +24,10 @@ setup(
     ],
     entry_points={
         'asreview.models.classifiers': [
-            'nb_example = asreviewcontrib.models.nb_default_param:NaiveBayesDefaultParamsModel',
+
         ],
         'asreview.models.feature_extraction': [
-            # define feature_extraction algorithms
+            'enron = asreviewcontrib.models.feature_extraction.enron.fe:Enron',
         ],
         'asreview.models.balance': [
             # define balance strategy algorithms

@@ -7,7 +7,7 @@ class Enron(BaseFeatureExtraction):
     The Naive Bayes classifier with the default SKLearn parameters.
     """
 
-    name = "enron_fe"
+    name = "enron"
     label = "enron_custom_feature_extraction"
 
     def __init__(self):

@@ -1,0 +1,12 @@
+[asreview.models.balance]
+
+
+[asreview.models.classifiers]
+nb_example = asreviewcontrib.models.nb_default_param:NaiveBayesDefaultParamsModel
+
+[asreview.models.feature_extraction]
+
+
+[asreview.models.query]
+
+

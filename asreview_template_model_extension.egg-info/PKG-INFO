@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: asreview-template-model-extension
+Version: 0.1
+Summary: Example classifier extension
+Home-page: https://github.com/asreview/asreview
+Author: ASReview team
+Author-email: asreview@uu.nl
+License: UNKNOWN
+Project-URL: Bug Reports, https://github.com/asreview/asreview/issues
+Project-URL: Source, https://github.com/asreview/asreview/
+Keywords: systematic review
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Requires-Python: ~=3.6
+License-File: LICENSE
+
+UNKNOWN
+

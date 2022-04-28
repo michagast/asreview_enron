@@ -1,0 +1,11 @@
+LICENSE
+README.md
+setup.py
+asreview_template_model_extension.egg-info/PKG-INFO
+asreview_template_model_extension.egg-info/SOURCES.txt
+asreview_template_model_extension.egg-info/dependency_links.txt
+asreview_template_model_extension.egg-info/entry_points.txt
+asreview_template_model_extension.egg-info/requires.txt
+asreview_template_model_extension.egg-info/top_level.txt
+asreviewcontrib/models/__init__.py
+asreviewcontrib/models/nb_default_param.py

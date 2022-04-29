@@ -19,7 +19,7 @@ class Enron(BaseFeatureExtraction):
     def __init__(self, *args, **kwargs):
 
         super(Enron, self).__init__(*args, **kwargs)
-
+    #Todo refactor this so that no for loop is used
     def transform(self, texts):
         model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
 
@@ -27,9 +27,10 @@ class Enron(BaseFeatureExtraction):
         sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)
-        apply_sentiment_analysis = lambda x: sentiment_analysis(x)
-
-        return apply_sentiment_analysis(texts)
+        result = np.array()
+        for text in texts:
+            np.append(result, sentiment_analysis(text))
+        return result
 
 
 

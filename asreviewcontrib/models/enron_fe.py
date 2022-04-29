@@ -18,10 +18,11 @@ class Enron(BaseFeatureExtraction):
 
         super(Enron, self).__init__(*args, **kwargs)
         self._model = AutoModelForSequenceClassification.from_pretrained("pdelobelle/robbert-v2-dutch-base" )
-        self._model.eval()
+
         self._tokenizernlp = AutoTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base")
 
     def transform(self, texts):
+        self._model.eval()
         self.sentiment_analysis = pipeline("sentiment-analysis", model=self._model, tokenizer=self._tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)

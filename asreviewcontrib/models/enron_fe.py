@@ -6,9 +6,9 @@ import torch                        #For running models with cude
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 
 class Enron(BaseFeatureExtraction):
-    """Naive Bayes classifier
+    """Custom feature extraction
 
-    The Naive Bayes classifier with the default SKLearn parameters.
+    Feature extraction that generates features based on sentiment values and named entity recogntion among other things.
     """
 
     name = "enron"
@@ -17,16 +17,15 @@ class Enron(BaseFeatureExtraction):
     def __init__(self, *args, **kwargs):
 
         super(Enron, self).__init__(*args, **kwargs)
-        self._model = AutoModelForSequenceClassification.from_pretrained("pdelobelle/robbert-v2-dutch-base" )
-
-        self._tokenizernlp = AutoTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base")
 
     def transform(self, texts):
-        self._model.eval()
-        self.sentiment_analysis = pipeline("sentiment-analysis", model=self._model, tokenizer=self._tokenizernlp,
+        model = AutoModelForSequenceClassification.from_pretrained("pdelobelle/robbert-v2-dutch-base")
+
+        tokenizernlp = AutoTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base")
+        sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)
-        X = texts.apply(lambda x: self.sentiment_analysis(x))
+        X = texts.apply(lambda x: sentiment_analysis(x))
 
         return X
 

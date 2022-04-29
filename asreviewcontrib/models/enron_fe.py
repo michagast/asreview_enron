@@ -32,11 +32,5 @@ class Enron(BaseFeatureExtraction):
 
 
 
-    def generatesentimentvalues(self,text):
-        sentiment_result = self.sentiment_analysis(text)
-        if sentiment_result[0]['label'] == 'NEGATIVE':
-            result = 0 - sentiment_result[0]['score']
-        else:
-            result = sentiment_result[0]['score']
-        return result
+
 

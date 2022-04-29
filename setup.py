@@ -20,7 +20,9 @@ setup(
     python_requires='~=3.6',
     install_requires=[
         'sklearn',
-        'asreview>=0.13'
+        'asreview>=0.13',
+        'torch',
+        'transformers'
     ],
     entry_points={
         'asreview.models.classifiers': [

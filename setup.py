@@ -4,7 +4,7 @@ from setuptools import find_namespace_packages
 setup(
     name='asreview-template-model-extension',
     version='0.1',
-    description='Example classifier extension',
+    description='Example feature_extraction extension',
     url='https://github.com/asreview/asreview',
     author='ASReview team',
     author_email='asreview@uu.nl',

@@ -1,5 +1,7 @@
 
 from asreview.models.feature_extraction.base import BaseFeatureExtraction
+import numpy as np
+
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
@@ -12,7 +14,7 @@ class Enron(BaseFeatureExtraction):
     """
 
     name = "enron"
-    label = "enron_custom_feature_extraction"
+    label = "Enron feature extraction"
 
     def __init__(self, *args, **kwargs):
 

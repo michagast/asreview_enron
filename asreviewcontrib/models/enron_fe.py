@@ -21,15 +21,15 @@ class Enron(BaseFeatureExtraction):
         super(Enron, self).__init__(*args, **kwargs)
 
     def transform(self, texts):
-        model = AutoModelForSequenceClassification.from_pretrained("pdelobelle/robbert-v2-dutch-base")
+        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
 
-        tokenizernlp = AutoTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base")
+        tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)
         X = texts.apply(lambda x: sentiment_analysis(x))
 
-        return X
+        return np.array(X)
 
 
 

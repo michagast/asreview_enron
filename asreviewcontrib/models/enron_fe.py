@@ -3,7 +3,7 @@ from asreview.models.feature_extraction.base import BaseFeatureExtraction
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 
 class Enron(BaseFeatureExtraction):
     """Naive Bayes classifier
@@ -20,6 +20,23 @@ class Enron(BaseFeatureExtraction):
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english" )
         self._model.eval()
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        self.sentiment_analysis = pipeline("sentiment-analysis", model=self._model, tokenizer=self._tokenizernlp,
+                                      max_length=512,
+                                      truncation=True, device=0)
     def transform(self, texts):
-        X = self._model.transform(texts).tocsr()
+        X = texts.apply(lambda x: self.sentiment_analysis(x))
+
         return X
+
+
+
+
+
+    def generatesentimentvalues(self,text):
+        sentiment_result = self.sentiment_analysis(text)
+        if sentiment_result[0]['label'] == 'NEGATIVE':
+            result = 0 - sentiment_result[0]['score']
+        else:
+            result = sentiment_result[0]['score']
+        return result
+

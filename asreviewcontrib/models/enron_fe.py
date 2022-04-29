@@ -27,9 +27,9 @@ class Enron(BaseFeatureExtraction):
         sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)
-        X = texts.apply(lambda x: sentiment_analysis(x))
+        apply_sentiment_analysis = lambda x: sentiment_analysis(x)
 
-        return np.array(X)
+        return apply_sentiment_analysis(texts)
 
 
 

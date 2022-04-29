@@ -14,9 +14,9 @@ class Enron(BaseFeatureExtraction):
     name = "enron"
     label = "enron_custom_feature_extraction"
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
 
-        super(Enron, self).__init__()
+        super(Enron, self).__init__(*args, **kwargs)
         self._model = AutoModelForSequenceClassification.from_pretrained("pdelobelle/robbert-v2-dutch-base" )
         self._model.eval()
         self._tokenizernlp = AutoTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base")

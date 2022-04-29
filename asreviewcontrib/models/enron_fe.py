@@ -27,7 +27,7 @@ class Enron(BaseFeatureExtraction):
         sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
                                            max_length=512,
                                            truncation=True, device=0)
-        result = np.array()
+        result = np.empty([0])
         for text in texts:
             np.append(result, sentiment_analysis(text))
         return result

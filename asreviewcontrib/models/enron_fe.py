@@ -22,11 +22,15 @@ class Enron(BaseFeatureExtraction):
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
-        result = np.empty([0])
+        resultsentiment = np.empty([0])
         for text in texts:
-            result = np.append(result, self.generatesentimentvalues(text))
-        print(result)
-        result = result.reshape(-1, 1)
+            resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
+        result = resultsentiment.reshape(-1, 1)
+        resulttextlen = np.empty([0])
+        for text in texts:
+            resulttextlen = np.append(resulttextlen, self.gettextlength(text))
+        result = np.append(result, resulttextlen, axis=1)
+
         return result
 
     def generatesentimentvalues(self, text):
@@ -40,6 +44,8 @@ class Enron(BaseFeatureExtraction):
             result = sentiment_result[0]['score']
         return result
 
+    def gettextlength(self, text):
+        return len(text)
 
 
 

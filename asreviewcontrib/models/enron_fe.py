@@ -23,14 +23,16 @@ class Enron(BaseFeatureExtraction):
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
         resultsentiment = np.empty([0])
+        resulttextlen = np.empty([0])
+        resultspecificwords = np.empty([0])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
-        result = resultsentiment.reshape(-1, 1)
-        resulttextlen = np.empty([0])
-        for text in texts:
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
+            resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
+        resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
-        result = np.append(result, resulttextlen, axis=1)
+        resultspecificwords = resultspecificwords.reshape(-1,1)
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords))
 
         return result
 
@@ -48,7 +50,16 @@ class Enron(BaseFeatureExtraction):
     def gettextlength(self, text):
         return len(text)
 
-
+    def specific_words_check(self, text):
+        ''' Function that searches for specific words and sums the total occurences
+        By using regex, this function looks for the words Office, Policy, CAISO, Sales and Ligitiation and counts the amount of times it finds these words and adds it all up
+        '''
+        amount_of_words = len(re.findall(
+            r'(\b[Oo]+ffice\b|\b(?<![@])[Ee]+nron\b|\b[Pp]+olicy\b|\bCAISO\b|\b[Ss]+ales\b|\b[Ll]itigation\b)', text))
+        if amount_of_words:
+            return (amount_of_words)
+        else:
+            return 0
 
 
 

@@ -19,12 +19,15 @@ class Enron(BaseFeatureExtraction):
     def __init__(self, *args, **kwargs):
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        self._modelner = AutoModelForSequenceClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english")
+        self.tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
         resultsentiment = np.empty([0])
         resulttextlen = np.empty([0])
         resultspecificwords = np.empty([0])
+        resultner = np.
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
@@ -60,6 +63,88 @@ class Enron(BaseFeatureExtraction):
             return (amount_of_words)
         else:
             return 0
+
+    alphabets = "([A-Za-z])"
+    prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
+    suffixes = "(Inc|Ltd|Jr|Sr|Co)"
+    starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+    acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
+    websites = "[.](com|net|org|io|gov)"
+
+    def split_into_sentences(self, text):
+        text = " " + text + "  "
+        text = text.replace("\n", " ")
+        text = re.sub(prefixes, "\\1<prd>", text)
+        text = re.sub(websites, "<prd>\\1", text)
+        if "Ph.D" in text: text = text.replace("Ph.D.", "Ph<prd>D<prd>")
+        text = re.sub("\s" + alphabets + "[.] ", " \\1<prd> ", text)
+        text = re.sub(acronyms + " " + starters, "\\1<stop> \\2", text)
+        text = re.sub(alphabets + "[.]" + alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>\\3<prd>", text)
+        text = re.sub(alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>", text)
+        text = re.sub(" " + suffixes + "[.] " + starters, " \\1<stop> \\2", text)
+        text = re.sub(" " + suffixes + "[.]", " \\1<prd>", text)
+        text = re.sub(" " + alphabets + "[.]", " \\1<prd>", text)
+        if "”" in text: text = text.replace(".”", "”.")
+        if "\"" in text: text = text.replace(".\"", "\".")
+        if "!" in text: text = text.replace("!\"", "\"!")
+        if "?" in text: text = text.replace("?\"", "\"?")
+        text = text.replace(".", ".<stop>")
+        text = text.replace("?", "?<stop>")
+        text = text.replace("!", "!<stop>")
+        text = text.replace("<prd>", ".")
+        sentences = text.split("<stop>")
+        sentences = sentences[:-1]
+        sentences = [s.strip() for s in sentences]
+        return sentences
+
+    def generate_named_entities(self, text):
+        ''' Function that generates named entity values for the inputted text.
+        This Method does a few things. First it splits the text into single sentences(split_into_senteces). The short sentences are then removed based on the average length of the sentences in the text(remove_short_tokens)
+        The tokens are then fed into a tokenizer and the generated tokens are fed into a model that generates named entities based on the tokens. The result of this is returned as a dict which can then be appended to the dataframe.
+        them to the dataframe and removing the old one.
+        '''
+        tokens = [x for x in self.split_into_sentences(text) if not any(y in x for y in ['/','+'])]  # split text into sentences and remove any sentence that contains / or + as a character
+        tokens = self.remove_short_tokens(tokens)
+        if tokens:
+            inputs = self.tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512,truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
+            with torch.no_grad():
+                results = self.modelner(**inputs)
+                for i, input in enumerate(inputs['input_ids']):
+                    namedentities = [self.modelner.config.id2label[item.item()] for item in results.logits[i].argmax(
+                        axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+            entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
+        else:
+            entitynumberlist =
+        return entitynumberlist
+
+    def remove_short_tokens(self, tokens):
+        average = 0
+        for token in tokens:
+            average += len(token)
+        try:
+            average = average / len(tokens)
+            return ([x for x in tokens if len(x) >= average])
+        except:
+            return (tokens)
+
+    def generate_entity_list(self, entities):
+        B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER = 0, 0, 0, 0, 0, 0, 0
+        for entity in entities:
+            if entity == 'B-LOC':
+                B_LOC += 1
+            elif entity == 'B-MISC':
+                B_MISC += 1
+            elif entity == 'B-ORG':
+                B_ORG += 1
+            elif entity == 'I-LOC':
+                I_LOC += 1
+            elif entity == 'I-MISC':
+                I_MISC += 1
+            elif entity == 'I-ORG':
+                I_ORG += 1
+            elif entity == 'I-PER':
+                I_PER += 1
+        return (np.array([B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER]))
 
 
 

@@ -29,6 +29,7 @@ class Enron(BaseFeatureExtraction):
         resulttextlen = np.empty([0])
         for text in texts:
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
+        resulttextlen = resulttextlen.reshape(-1,1)
         result = np.append(result, resulttextlen, axis=1)
 
         return result

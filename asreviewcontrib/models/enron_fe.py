@@ -17,21 +17,26 @@ class Enron(BaseFeatureExtraction):
     label = "Enron feature extraction"
 
     def __init__(self, *args, **kwargs):
-
+        self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
-        model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-
-        tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        sentiment_analysis = pipeline("sentiment-analysis", model=model, tokenizer=tokenizernlp,
-                                           max_length=512,
-                                           truncation=True, device=0)
         result = np.empty([0])
         for text in texts:
-            np.append(result, sentiment_analysis(text))
+            np.append(result, self.generatesentimentvalues(text))
         return result
 
+    def generatesentimentvalues(self, text):
+        sentiment_analysis = pipeline("sentiment-analysis", model=self._model, tokenizer=self._tokenizernlp,
+                                      max_length=512,
+                                      truncation=True, device=0)
+        sentiment_result = sentiment_analysis(text)
+        if sentiment_result[0]['label'] == 'NEGATIVE':
+            result = 0 - sentiment_result[0]['score']
+        else:
+            result = sentiment_result[0]['score']
+        return result
 
 
 

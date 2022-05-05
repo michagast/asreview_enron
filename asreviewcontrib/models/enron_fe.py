@@ -24,7 +24,8 @@ class Enron(BaseFeatureExtraction):
     def transform(self, texts):
         result = np.empty([0])
         for text in texts:
-            np.append(result, self.generatesentimentvalues(text))
+            result = np.append(result, self.generatesentimentvalues(self,text))
+        print(result)
         return result
 
     def generatesentimentvalues(self, text):

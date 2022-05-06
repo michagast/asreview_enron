@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification pipeline
 
 class Enron(BaseFeatureExtraction):
     """Custom feature extraction
@@ -20,7 +20,7 @@ class Enron(BaseFeatureExtraction):
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._model.eval()
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        self._modelner = AutoModelForSequenceClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
+        self._modelner = AutoModelForTokenClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
         self._modelner.eval()
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         self.alphabets = "([A-Za-z])"
@@ -141,7 +141,6 @@ class Enron(BaseFeatureExtraction):
             inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
             with torch.no_grad():
                 results = self._modelner(**inputs)
-                print(results)
                 for i, _input in enumerate(inputs['input_ids']):
                     namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
             entitynumberslist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this

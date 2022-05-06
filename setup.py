@@ -22,7 +22,8 @@ setup(
         'sklearn',
         'asreview>=0.13',
         'torch',
-        'transformers'
+        'transformers',
+        're'
     ],
     entry_points={
         'asreview.models.classifiers': [

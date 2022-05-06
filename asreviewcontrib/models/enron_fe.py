@@ -110,7 +110,7 @@ class Enron(BaseFeatureExtraction):
         tokens = self.remove_short_tokens(tokens)
         print(tokens)
         if tokens:
-            inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512,truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
+            inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
             with torch.no_grad():
                 results = self._modelner(**inputs)
                 for i, input in enumerate(inputs['input_ids']):

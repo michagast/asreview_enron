@@ -139,13 +139,13 @@ class Enron(BaseFeatureExtraction):
         tokens = self.remove_short_tokens(tokens)
         if tokens:
             inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
-            print(inputs)
             with torch.no_grad():
                 results = self._modelner(**inputs)
+                print(results)
                 for i, _input in enumerate(inputs['input_ids']):
-                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis = 1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
-            entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
+                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+            entitynumberslist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
         else:
-            entitynumberlist = [0,0,0,0,0,0,0]
-        return entitynumberlist
+            entitynumberslist = [0,0,0,0,0,0,0]
+        return entitynumberslist
 

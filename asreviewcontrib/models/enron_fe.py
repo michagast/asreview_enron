@@ -18,8 +18,10 @@ class Enron(BaseFeatureExtraction):
 
     def __init__(self, *args, **kwargs):
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
+        self._model.eval()
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._modelner = AutoModelForSequenceClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english")
+        self._modelner.eval()
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"

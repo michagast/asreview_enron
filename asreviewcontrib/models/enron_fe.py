@@ -113,7 +113,7 @@ class Enron(BaseFeatureExtraction):
             with torch.no_grad():
                 results = self._modelner(**inputs)
                 for i, input in enumerate(inputs['input_ids']):
-                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax()]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
             entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
         else:
             entitynumberlist = [0,0,0,0,0,0,0]

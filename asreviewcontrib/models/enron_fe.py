@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
 
 class Enron(BaseFeatureExtraction):
     """Custom feature extraction

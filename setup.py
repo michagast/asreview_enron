@@ -23,7 +23,7 @@ setup(
         'asreview>=0.13',
         'torch',
         'transformers',
-        're'
+        're',
     ],
     entry_points={
         'asreview.models.classifiers': [

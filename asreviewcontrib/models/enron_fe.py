@@ -20,7 +20,7 @@ class Enron(BaseFeatureExtraction):
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._modelner = AutoModelForSequenceClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english")
-        self.tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
+        self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
         self.suffixes = "(Inc|Ltd|Jr|Sr|Co)"
@@ -107,11 +107,11 @@ class Enron(BaseFeatureExtraction):
         tokens = [x for x in self.split_into_sentences(text) if not any(y in x for y in ['/','+'])]  # split text into sentences and remove any sentence that contains / or + as a character
         tokens = self.remove_short_tokens(tokens)
         if tokens:
-            inputs = self.tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512,truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
+            inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512,truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
             with torch.no_grad():
-                results = self.modelner(**inputs)
+                results = self._modelner(**inputs)
                 for i, input in enumerate(inputs['input_ids']):
-                    namedentities = [self.modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
             entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
         else:
             entitynumberlist = [0,0,0,0,0,0,0]

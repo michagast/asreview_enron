@@ -100,26 +100,6 @@ class Enron(BaseFeatureExtraction):
         sentences = [s.strip() for s in sentences]
         return sentences
 
-    def generate_named_entities(self, text):
-        ''' Function that generates named entity values for the inputted text.
-        This Method does a few things. First it splits the text into single sentences(split_into_senteces). The short sentences are then removed based on the average length of the sentences in the text(remove_short_tokens)
-        The tokens are then fed into a tokenizer and the generated tokens are fed into a model that generates named entities based on the tokens. The result of this is returned as a dict which can then be appended to the dataframe.
-        them to the dataframe and removing the old one.
-        '''
-        tokens = [x for x in self.split_into_sentences(text) if not any(y in x for y in ['/','+'])]  # split text into sentences and remove any sentence that contains / or + as a character
-        tokens = self.remove_short_tokens(tokens)
-        print(tokens)
-        if tokens:
-            inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
-            with torch.no_grad():
-                results = self._modelner(**inputs)
-                for i, input in enumerate(inputs['input_ids']):
-                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis = 1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
-            entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
-        else:
-            entitynumberlist = [0,0,0,0,0,0,0]
-        return entitynumberlist
-
     def remove_short_tokens(self, tokens):
         average = 0
         for token in tokens:
@@ -149,5 +129,23 @@ class Enron(BaseFeatureExtraction):
                 I_PER += 1
         return ([B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER])
 
-
+    def generate_named_entities(self, text):
+        ''' Function that generates named entity values for the inputted text.
+        This Method does a few things. First it splits the text into single sentences(split_into_senteces). The short sentences are then removed based on the average length of the sentences in the text(remove_short_tokens)
+        The tokens are then fed into a tokenizer and the generated tokens are fed into a model that generates named entities based on the tokens. The result of this is returned as a dict which can then be appended to the dataframe.
+        them to the dataframe and removing the old one.
+        '''
+        tokens = [x for x in self.split_into_sentences(text) if not any(y in x for y in ['/','+'])]  # split text into sentences and remove any sentence that contains / or + as a character
+        tokens = self.remove_short_tokens(tokens)
+        print(tokens)
+        if tokens:
+            inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
+            with torch.no_grad():
+                results = self._modelner(**inputs)
+                for i, input in enumerate(inputs['input_ids']):
+                    namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis = 1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+            entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
+        else:
+            entitynumberlist = [0,0,0,0,0,0,0]
+        return entitynumberlist
 

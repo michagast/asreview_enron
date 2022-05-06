@@ -21,21 +21,29 @@ class Enron(BaseFeatureExtraction):
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._modelner = AutoModelForSequenceClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english")
         self.tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
+        self.alphabets = "([A-Za-z])"
+        self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
+        self.suffixes = "(Inc|Ltd|Jr|Sr|Co)"
+        self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+        self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
+        self.websites = "[.](com|net|org|io|gov)"
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
         resultsentiment = np.empty([0])
         resulttextlen = np.empty([0])
         resultspecificwords = np.empty([0])
-        resultner = np.
+        resultner = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
+            resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
+        resultner = resultner.reshape(int(len(resultner)/7),7)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultner))
 
         return result
 
@@ -64,26 +72,19 @@ class Enron(BaseFeatureExtraction):
         else:
             return 0
 
-    alphabets = "([A-Za-z])"
-    prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
-    suffixes = "(Inc|Ltd|Jr|Sr|Co)"
-    starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
-    acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
-    websites = "[.](com|net|org|io|gov)"
-
     def split_into_sentences(self, text):
         text = " " + text + "  "
         text = text.replace("\n", " ")
-        text = re.sub(prefixes, "\\1<prd>", text)
-        text = re.sub(websites, "<prd>\\1", text)
+        text = re.sub(self.prefixes, "\\1<prd>", text)
+        text = re.sub(self.websites, "<prd>\\1", text)
         if "Ph.D" in text: text = text.replace("Ph.D.", "Ph<prd>D<prd>")
-        text = re.sub("\s" + alphabets + "[.] ", " \\1<prd> ", text)
-        text = re.sub(acronyms + " " + starters, "\\1<stop> \\2", text)
-        text = re.sub(alphabets + "[.]" + alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>\\3<prd>", text)
-        text = re.sub(alphabets + "[.]" + alphabets + "[.]", "\\1<prd>\\2<prd>", text)
-        text = re.sub(" " + suffixes + "[.] " + starters, " \\1<stop> \\2", text)
-        text = re.sub(" " + suffixes + "[.]", " \\1<prd>", text)
-        text = re.sub(" " + alphabets + "[.]", " \\1<prd>", text)
+        text = re.sub("\s" + self.alphabets + "[.] ", " \\1<prd> ", text)
+        text = re.sub(self.acronyms + " " + self.starters, "\\1<stop> \\2", text)
+        text = re.sub(self.alphabets + "[.]" + self.alphabets + "[.]" + self.alphabets + "[.]", "\\1<prd>\\2<prd>\\3<prd>", text)
+        text = re.sub(self.alphabets + "[.]" + self.alphabets + "[.]", "\\1<prd>\\2<prd>", text)
+        text = re.sub(" " + self.suffixes + "[.] " + self.starters, " \\1<stop> \\2", text)
+        text = re.sub(" " + self.suffixes + "[.]", " \\1<prd>", text)
+        text = re.sub(" " + self.alphabets + "[.]", " \\1<prd>", text)
         if "”" in text: text = text.replace(".”", "”.")
         if "\"" in text: text = text.replace(".\"", "\".")
         if "!" in text: text = text.replace("!\"", "\"!")
@@ -110,11 +111,10 @@ class Enron(BaseFeatureExtraction):
             with torch.no_grad():
                 results = self.modelner(**inputs)
                 for i, input in enumerate(inputs['input_ids']):
-                    namedentities = [self.modelner.config.id2label[item.item()] for item in results.logits[i].argmax(
-                        axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
+                    namedentities = [self.modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
             entitynumberlist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
         else:
-            entitynumberlist =
+            entitynumberlist = [0,0,0,0,0,0,0]
         return entitynumberlist
 
     def remove_short_tokens(self, tokens):
@@ -144,7 +144,7 @@ class Enron(BaseFeatureExtraction):
                 I_ORG += 1
             elif entity == 'I-PER':
                 I_PER += 1
-        return (np.array([B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER]))
+        return ([B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER])
 
 
 

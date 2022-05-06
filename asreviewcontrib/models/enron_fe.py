@@ -137,9 +137,9 @@ class Enron(BaseFeatureExtraction):
         '''
         tokens = [x for x in self.split_into_sentences(text) if not any(y in x for y in ['/','+'])]  # split text into sentences and remove any sentence that contains / or + as a character
         tokens = self.remove_short_tokens(tokens)
-        print(tokens)
         if tokens:
             inputs = self._tokenizerner.batch_encode_plus(tokens, return_tensors="pt", padding=True, max_length=512, truncation=True)  # tokenize sentences, max_length is 512 for if cuda is enabled to speed the model up
+            print(inputs)
             with torch.no_grad():
                 results = self._modelner(**inputs)
                 for i, input in enumerate(inputs['input_ids']):

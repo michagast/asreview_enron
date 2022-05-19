@@ -145,6 +145,6 @@ class Enron(BaseFeatureExtraction):
                     namedentities = [self._modelner.config.id2label[item.item()] for item in results.logits[i].argmax(axis=1)]  # for every probability for a named entity for a word, turn the probabilities into their associated labels
             entitynumberslist = self.generate_entity_list(namedentities)  # Based on the array of entity names that is generated, count each entity and make a dict of this
         else:
-            entitynumberslist = [0,0,0,0,0,0,0]
+            entitynumberslist = [0,0,0,0]
         return entitynumberslist
 

@@ -41,7 +41,7 @@ class Enron(BaseFeatureExtraction):
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
-        resultner = resultner.reshape(int(len(resultner)/7),7)
+        resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
@@ -109,7 +109,7 @@ class Enron(BaseFeatureExtraction):
             return ([x for x in tokens if len(x) >= average])
         except:
             return (tokens)
-
+    #TO0DO:Remove All B-entities if they do not add anything useful to the model
     def generate_entity_list(self, entities):
         B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER = 0, 0, 0, 0, 0, 0, 0
         for entity in entities:
@@ -127,7 +127,7 @@ class Enron(BaseFeatureExtraction):
                 I_ORG += 1
             elif entity == 'I-PER':
                 I_PER += 1
-        return ([B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER])
+        return ([I_LOC, I_MISC, I_ORG, I_PER])
 
     def generate_named_entities(self, text):
         ''' Function that generates named entity values for the inputted text.

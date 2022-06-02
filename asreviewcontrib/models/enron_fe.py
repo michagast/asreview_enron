@@ -68,7 +68,7 @@ class Enron(BaseFeatureExtraction):
         By using regex, this function looks for the words Office, Policy, CAISO, Sales and Ligitiation and counts the amount of times it finds these words and adds it all up
         '''
         amount_of_words = len(re.findall(
-            r'(\b[Oo]+ffice\b|\b(?<![@])[Ee]+nron\b|\b[Pp]+olicy\b|\bCAISO\b|\b[Ss]+ales\b|\b[Ll]itigation\b)', text))
+            r'(\b[Mm]+eet?(ing)?s?\b|\bexpense report\b|\b[Cc]+all\b|\b[Vv]+oicemail\b|\b[Ee]+?[Mm]+ail(ing)?\b|\b[Ww]+eeks\b|\b([Ss]+chedul(e)?(ing)?)|\b[Tt]+ime|\b[Ww]+eek\b|\b[Ii]+nvite?d?(ing)?\b|\b([0-1]?[0-9]):[0-5][0-9]\b)', text))
         if amount_of_words:
             return (amount_of_words)
         else:

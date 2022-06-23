@@ -6,7 +6,6 @@ import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
 import enchant                      #For BagOfWords feature
-from gensim.parsing.preprocessing import remove_stopwords #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline

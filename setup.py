@@ -14,6 +14,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.10'
     ],
     keywords='systematic review',
     packages=find_namespace_packages(include=['asreviewcontrib.*']),
@@ -24,7 +25,6 @@ setup(
         'torch',
         'transformers',
         'pyenchant',
-        'gensim',
     ],
     entry_points={
         'asreview.models.classifiers': [

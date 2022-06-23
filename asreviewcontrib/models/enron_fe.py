@@ -5,6 +5,10 @@ import numpy as np
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
+import enchant                      #For BagOfWords feature
+from gensim.parsing.preprocessing import remove_stopwords #For BagOfWords feature
+from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
+
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
 
 class Enron(BaseFeatureExtraction):
@@ -29,6 +33,10 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
+        self.dictionary = enchant.Dict("en_US")
+        self.vectorizer = CountVectorizer()
+
+
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
@@ -36,16 +44,18 @@ class Enron(BaseFeatureExtraction):
         resulttextlen = np.empty([0])
         resultspecificwords = np.empty([0])
         resultner = np.array([])
+        result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
+            result_bow = np.append(result_bow, self.bag_of_words(text))
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultner, result_bow))
 
         return result
 
@@ -147,4 +157,29 @@ class Enron(BaseFeatureExtraction):
         else:
             entitynumberslist = [0,0,0,0]
         return entitynumberslist
+
+    def remove_numbers_phonenumbers(self,text):
+        text = re.sub(r'\b([0-9]{3}-[0-9]{3}-[0-9]{4})\b', '', text)
+        text = re.sub(r'\b([0-1][0-9]\/[0-3][0-9]\/[0-9]{4})\b', '', text)
+        text = re.sub(r'\b([0-1]?[0-9]):[0-5][0-9]\b', '', text)
+        text = re.sub(r'\b\w*\d\w*\b', '', text)
+        text = re.sub(r'\b ?[0-9]+ \b', '', text)
+        splits = text.split()
+        for word in splits:
+            if not self.dictionary.check(word):
+                text = text.replace(word, '')
+        return text
+
+    def bag_of_words(self, text):
+        text = self.remove_numbers_phonenumbers(text)
+        X_bow = self.vectorizer.fit_transform(text)
+        df_bow = pd.DataFrame(X_bow.toarray(),columns=self.vectorizer.get_feature_names_out())
+        try:
+            df_bow.drop(['label'], axis=1, inplace=True)
+        except:
+            pass
+        df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:100].index.values]
+        return df_bow.to_numpy()
+
+
 

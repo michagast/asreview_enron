@@ -23,6 +23,8 @@ setup(
         'asreview>=0.13',
         'torch',
         'transformers',
+        'pyenchant',
+        'gensim',
     ],
     entry_points={
         'asreview.models.classifiers': [

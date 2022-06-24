@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
-import enchant                      #For BagOfWords feature
+import nltk.data                    #For various things
+#import enchant                      #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
@@ -32,7 +33,7 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
-        self.dictionary = enchant.Dict("en_US")
+        #self.dictionary = enchant.Dict("en_US")
         self.vectorizer = CountVectorizer()
 
 
@@ -43,18 +44,21 @@ class Enron(BaseFeatureExtraction):
         resulttextlen = np.empty([0])
         resultspecificwords = np.empty([0])
         resultner = np.array([])
-        result_bow = np.array([])
+        resultstddevsentence = np.empty([0])
+        #result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
-            result_bow = np.append(result_bow, self.bag_of_words(text))
+            resultstddevsentence = np.append(self.standard_dev_sentence_length(text), axis=0)
+            #result_bow = np.append(result_bow, self.bag_of_words(text))
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultner, result_bow))
+        resultstddevsentence = resultstddevsentence.reshape((-1,1))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence,  resultner))
 
         return result
 
@@ -180,5 +184,11 @@ class Enron(BaseFeatureExtraction):
         df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:100].index.values]
         return df_bow.to_numpy()
 
+    def standard_dev_sentence_length(text):
+        sentences = nltk.tokenize.sent_tokenize(text)
+        sentence_length = []
+        for item in sentences:
+            sentence_length.append(len(item))
+        return (np.std(sentence_length))
 
 

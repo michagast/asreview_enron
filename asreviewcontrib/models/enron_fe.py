@@ -52,7 +52,7 @@ class Enron(BaseFeatureExtraction):
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
-            resultstddevsentence = np.append(self.standard_dev_sentence_length(text), axis=0)
+            resultstddevsentence = np.append(self.standard_dev_sentence_length(text))
             #result_bow = np.append(result_bow, self.bag_of_words(text))
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)

@@ -25,6 +25,7 @@ setup(
         'torch',
         'transformers',
         'pyenchant',
+        'nltk',
     ],
     entry_points={
         'asreview.models.classifiers': [

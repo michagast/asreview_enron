@@ -40,7 +40,7 @@ class Enron(BaseFeatureExtraction):
 
         #Check if nltk data is already downloaded
         try:
-            nltk.data.find('C:\Users\MichaG\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\Roaming\nltk_data\tokenizers\punkt.zip')
+            nltk.data.find(r'C:\Users\MichaG\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\Roaming\nltk_data\tokenizers\punkt.zip')
 
         except:
             nltk.download('punkt')

@@ -35,6 +35,7 @@ class Enron(BaseFeatureExtraction):
         self.websites = "[.](com|net|org|io|gov)"
         #self.dictionary = enchant.Dict("en_US")
         self.vectorizer = CountVectorizer()
+        nltk.download('punkt')
 
 
         super(Enron, self).__init__(*args, **kwargs)

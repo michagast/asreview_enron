@@ -6,6 +6,8 @@ import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
 import nltk.data                    #For various things
+from nltk.tag import pos_tag        #For finding proper nouns in text
+
 #import enchant                      #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
@@ -36,11 +38,13 @@ class Enron(BaseFeatureExtraction):
         #self.dictionary = enchant.Dict("en_US")
         self.vectorizer = CountVectorizer()
 
-        #Check if punkt is already downloaded
+        #Check if nltk data is already downloaded
         try:
-            nltk.data.find('tokenizers/punkt.zip')
+            nltk.data.find('C:\Users\MichaG\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\Roaming\nltk_data\tokenizers\punkt.zip')
+
         except:
             nltk.download('punkt')
+            nltk.download('averaged_perceptron_tagger')
 
 
         super(Enron, self).__init__(*args, **kwargs)
@@ -51,6 +55,10 @@ class Enron(BaseFeatureExtraction):
         resultspecificwords = np.empty([0])
         resultner = np.array([])
         resultstddevsentence = np.empty([0])
+        resultstddevwords = np.empty([0])
+        resultreadability = np.empty([0])
+        resulttypetoken = np.empty([0])
+        resultpropernouns = np.empty([0])
         #result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
@@ -58,13 +66,21 @@ class Enron(BaseFeatureExtraction):
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
             resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
+            resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
+            resultreadability = np.append(resultreadability, self.readability_index(text))
+            resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
+            resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             #result_bow = np.append(result_bow, self.bag_of_words(text))
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
-        resultstddevsentence = resultstddevsentence.reshape((-1,1))
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence,  resultner))
+        resultstddevsentence = resultstddevsentence.reshape(-1,1)
+        resultstddevwords = resultstddevwords.reshape(-1,1)
+        resultreadability = resultreadability.reshape(-1,1)
+        resulttypetoken = resulttypetoken.reshape(-1,1)
+        resultpropernouns = resultpropernouns.reshape(-1,1)
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultner))
 
         return result
 
@@ -197,4 +213,27 @@ class Enron(BaseFeatureExtraction):
             sentence_length.append(len(item))
         return (np.std(sentence_length))
 
+    def readability_index(self, text):
+        sentences = nltk.tokenize.sent_tokenize(text)
+        words = text.count(' ')
+        characters = len(text) - words
+        try:
+            return (4.71 * (characters / words) + 0.5 * (words / len(sentences)) - 21.43)
+        except:
+            return (0)
 
+    def standard_dev_word_length(self,text):
+        words = text.split()
+        words_length = []
+        for word in words:
+            words_length.append(len(word))
+        return (np.std(words_length))
+
+    def type_token_ratio(self,text):
+        unique = set(text.split())
+        return len(unique) / len(text.split())
+
+    def proper_nouns(self,text):
+        tagged_sent = pos_tag(text.split())
+        propernouns = [word for word, pos in tagged_sent if pos == 'NNP']
+        return len(propernouns)

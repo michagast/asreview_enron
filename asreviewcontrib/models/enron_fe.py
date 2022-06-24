@@ -184,7 +184,7 @@ class Enron(BaseFeatureExtraction):
         df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:100].index.values]
         return df_bow.to_numpy()
 
-    def standard_dev_sentence_length(text):
+    def standard_dev_sentence_length(self,text):
         sentences = nltk.tokenize.sent_tokenize(text)
         sentence_length = []
         for item in sentences:

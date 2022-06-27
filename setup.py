@@ -27,7 +27,7 @@ setup(
         'pyenchant',
         'nltk',
         'passivepy',
-        'requirements_lg @ git+https://raw.githubusercontent.com/mitramir55/PassivePy/main/PassivePyCode/PassivePySrc/requirements_lg.txt',
+        'requirements_lg @ -r git+https://raw.githubusercontent.com/mitramir55/PassivePy/main/PassivePyCode/PassivePySrc/requirements_lg.txt',
 
     ],
     entry_points={

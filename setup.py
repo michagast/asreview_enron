@@ -30,7 +30,7 @@ setup(
         'spacy',
         'spacy-legacy',
         'termcolor',
-        'en_core_weg_lg @ some-pkg @ git+ssh://git@github.com/someorgname/pkg-repo-name@v1.1#egg=some-pkg'
+        'en_core_weg_lg @ git+ssh://git@github.com/someorgname/pkg-repo-name@v1.1#egg=some-pkg'
 
 
     ],

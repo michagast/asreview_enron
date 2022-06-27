@@ -27,7 +27,11 @@ setup(
         'pyenchant',
         'nltk',
         'passivepy',
-        '-r git+https://raw.githubusercontent.com/mitramir55/PassivePy/main/PassivePyCode/PassivePySrc/requirements_lg.txt',
+        'spacy',
+        'spacy-legacy',
+        'termcolor',
+        'en_core_weg_lg @ some-pkg @ git+ssh://git@github.com/someorgname/pkg-repo-name@v1.1#egg=some-pkg'
+
 
     ],
     entry_points={

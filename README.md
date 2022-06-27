@@ -11,12 +11,12 @@ on ReadTheDocs for more information on writing extensions.
 
 ## Getting started
 
-Click the `Use this template` button and add/modify the algorithms. Install 
-your new classifier with
-
-```bash
-pip install .
+The only package that needs to be installed separately is the following spacy model
 ```
+!pip install -r https://raw.githubusercontent.com/mitramir55/PassivePy/main/PassivePyCode/PassivePySrc/requirements_lg.txt
+
+```
+
 
 or
 

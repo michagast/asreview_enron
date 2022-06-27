@@ -9,6 +9,7 @@ import nltk.data                    #For various things
 from nltk.tag import pos_tag        #For finding proper nouns in text
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 
+
 #import enchant                      #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 

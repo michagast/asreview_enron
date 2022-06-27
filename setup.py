@@ -26,6 +26,7 @@ setup(
         'transformers',
         'pyenchant',
         'nltk',
+        'passivepy',
     ],
     entry_points={
         'asreview.models.classifiers': [

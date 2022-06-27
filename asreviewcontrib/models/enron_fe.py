@@ -7,6 +7,7 @@ import re                           #For performing regex
 import torch                        #For running models with cude
 import nltk.data                    #For various things
 from nltk.tag import pos_tag        #For finding proper nouns in text
+from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 
 #import enchant                      #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
@@ -23,12 +24,17 @@ class Enron(BaseFeatureExtraction):
     label = "Enron feature extraction"
 
     def __init__(self, *args, **kwargs):
+        #Load in all required thing from packages.
         self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        self._model.eval()
+        self._model.eval() #make sure model is not in training mode
         self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
         self._modelner = AutoModelForTokenClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
-        self._modelner.eval()
+        self._modelner.eval() # make sure model is not in training mode
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
+        self.vectorizer = CountVectorizer()
+        spacy_model = "en_core_web_lg"
+        self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
+        #For use in the split into sentences function
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
         self.suffixes = "(Inc|Ltd|Jr|Sr|Co)"
@@ -36,7 +42,7 @@ class Enron(BaseFeatureExtraction):
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
         #self.dictionary = enchant.Dict("en_US")
-        self.vectorizer = CountVectorizer()
+
 
         #Check if nltk data is already downloaded
         try:
@@ -50,6 +56,7 @@ class Enron(BaseFeatureExtraction):
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
     def transform(self, texts):
+        # Create numpy array of features since asreview model only works with np arrays
         resultsentiment = np.empty([0])
         resulttextlen = np.empty([0])
         resultspecificwords = np.empty([0])
@@ -59,6 +66,7 @@ class Enron(BaseFeatureExtraction):
         resultreadability = np.empty([0])
         resulttypetoken = np.empty([0])
         resultpropernouns = np.empty([0])
+        resultpassivevoice = np.empty([0])
         #result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
@@ -70,7 +78,10 @@ class Enron(BaseFeatureExtraction):
             resultreadability = np.append(resultreadability, self.readability_index(text))
             resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
+            resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #result_bow = np.append(result_bow, self.bag_of_words(text))
+
+        # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
@@ -80,11 +91,17 @@ class Enron(BaseFeatureExtraction):
         resultreadability = resultreadability.reshape(-1,1)
         resulttypetoken = resulttypetoken.reshape(-1,1)
         resultpropernouns = resultpropernouns.reshape(-1,1)
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultner))
+        resultpassivevoice = resultpassivevoice.reshape(-1,1)
+        #result_bow = result_bow.reshape(-1,1)
+
+        #Concatenate all arrays into one final array
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultner))
 
         return result
 
     def generatesentimentvalues(self, text):
+        ''' Function that generates the sentiment value for the specific text
+        '''
         sentiment_analysis = pipeline("sentiment-analysis", model=self._model, tokenizer=self._tokenizernlp,
                                       max_length=512,
                                       truncation=True, device=0)
@@ -110,6 +127,8 @@ class Enron(BaseFeatureExtraction):
             return 0
 
     def split_into_sentences(self, text):
+        '''Function that splits a specific text into sentences. Used for generating named entities
+        '''
         text = " " + text + "  "
         text = text.replace("\n", " ")
         text = re.sub(self.prefixes, "\\1<prd>", text)
@@ -136,6 +155,8 @@ class Enron(BaseFeatureExtraction):
         return sentences
 
     def remove_short_tokens(self, tokens):
+        '''Functions that removes tokens that are shorter than the average of all token lengths.
+        '''
         average = 0
         for token in tokens:
             average += len(token)
@@ -146,6 +167,8 @@ class Enron(BaseFeatureExtraction):
             return (tokens)
     #TO0DO:Remove All B-entities if they do not add anything useful to the model
     def generate_entity_list(self, entities):
+        '''Function used for generating a list of entity numbers based on the amount of times they appear in the entity list.
+        '''
         B_LOC, B_MISC, B_ORG, I_LOC, I_MISC, I_ORG, I_PER = 0, 0, 0, 0, 0, 0, 0
         for entity in entities:
             if entity == 'B-LOC':
@@ -184,17 +207,20 @@ class Enron(BaseFeatureExtraction):
         return entitynumberslist
 
     def remove_numbers_phonenumbers(self,text):
-        text = re.sub(r'\b([0-9]{3}-[0-9]{3}-[0-9]{4})\b', '', text)
-        text = re.sub(r'\b([0-1][0-9]\/[0-3][0-9]\/[0-9]{4})\b', '', text)
-        text = re.sub(r'\b([0-1]?[0-9]):[0-5][0-9]\b', '', text)
-        text = re.sub(r'\b\w*\d\w*\b', '', text)
-        text = re.sub(r'\b ?[0-9]+ \b', '', text)
+        ''' Function that remove specific sequences of numbers from a text so that they are not seen as words by the BagofWords feature.
+        '''
+        text = re.sub(r'\b([0-9]{3}-[0-9]{3}-[0-9]{4})\b', '', text) #Remove US phone numbers
+        text = re.sub(r'\b([0-1][0-9]\/[0-3][0-9]\/[0-9]{4})\b', '', text) #Removes dates
+        text = re.sub(r'\b([0-1]?[0-9]):[0-5][0-9]\b', '', text) #Removes timestamps
+        text = re.sub(r'\b\w*\d\w*\b', '', text) #Removes single whitespaces
+        text = re.sub(r'\b ?[0-9]+ \b', '', text) #Removes remaining numbers
         splits = text.split()
         for word in splits:
             if not self.dictionary.check(word):
                 text = text.replace(word, '')
         return text
 
+    #TODO refactor this function have it use all texts at once since otherwise it will not work
     def bag_of_words(self, text):
         text = self.remove_numbers_phonenumbers(text)
         X_bow = self.vectorizer.fit_transform(text)
@@ -207,6 +233,8 @@ class Enron(BaseFeatureExtraction):
         return df_bow.to_numpy()
 
     def standard_dev_sentence_length(self,text):
+        ''' Function that calulates the standard deviation of the length of all the sentences in a text.
+        '''
         sentences = nltk.tokenize.sent_tokenize(text)
         sentence_length = []
         for item in sentences:
@@ -214,6 +242,8 @@ class Enron(BaseFeatureExtraction):
         return (np.std(sentence_length))
 
     def readability_index(self, text):
+        ''' Function that calculates the automated readability index of a text.
+        '''
         sentences = nltk.tokenize.sent_tokenize(text)
         words = text.count(' ')
         characters = len(text) - words
@@ -223,6 +253,8 @@ class Enron(BaseFeatureExtraction):
             return (0)
 
     def standard_dev_word_length(self,text):
+        ''' Function that calculates the standard deviation of the word lengths in a text.
+        '''
         words = text.split()
         words_length = []
         for word in words:
@@ -230,10 +262,21 @@ class Enron(BaseFeatureExtraction):
         return (np.std(words_length))
 
     def type_token_ratio(self,text):
+        ''' Function that calculates the type token ratio of the text. The type token ratio is the ratio between the toal amount of words and the amount of unique words in a text.
+        '''
         unique = set(text.split())
         return len(unique) / len(text.split())
 
     def proper_nouns(self,text):
+        ''' Function that caclulates how many proper nouns there are in a text. This is done with the help of the NLTK perceptron tagger.
+        '''
         tagged_sent = pos_tag(text.split())
         propernouns = [word for word, pos in tagged_sent if pos == 'NNP']
         return len(propernouns)
+
+    def percentage_passive_voice(self, text):
+        ''' Function that caclulates what percentage of sentences in a text are written in passive voice. This is done using the passivePy package.
+        '''
+        passive_amount = self.passivepy.match_text(text, full_passive=True, truncated_passive=True).passive_count.iloc[0]
+        sentence_amount = nltk.tokenize.sent_tokenize(text)
+        return passive_amount / len(sentence_amount)

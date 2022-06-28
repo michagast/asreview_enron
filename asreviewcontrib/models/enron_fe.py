@@ -42,7 +42,7 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
-        #self.dictionary = enchant.Dict("en_US")
+        self.dictionary = enchant.Dict("en_US")
 
 
         nltk.download('punkt')
@@ -63,7 +63,7 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = np.empty([0])
         resultpropernouns = np.empty([0])
         resultpassivevoice = np.empty([0])
-        #result_bow = np.array([])
+        result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
@@ -75,7 +75,7 @@ class Enron(BaseFeatureExtraction):
             resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
-            #result_bow = np.append(result_bow, self.bag_of_words(text))
+            result_bow = np.append(result_bow, self.bag_of_words(text))
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
@@ -88,7 +88,7 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = resulttypetoken.reshape(-1,1)
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
-        #result_bow = result_bow.reshape(-1,1)
+        result_bow = result_bow.reshape(-1,1)
 
         print('Standard dev words array length is: ' +resultstddevwords)
         print('Standard dev sentence array length is: '+resultstddevsentence)

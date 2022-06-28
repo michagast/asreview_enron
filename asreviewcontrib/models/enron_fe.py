@@ -45,13 +45,8 @@ class Enron(BaseFeatureExtraction):
         #self.dictionary = enchant.Dict("en_US")
 
 
-        #Check if nltk data is already downloaded
-        try:
-            nltk.data.find(r'C:\Users\MichaG\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\Roaming\nltk_data\tokenizers\punkt.zip')
-
-        except:
-            nltk.download('punkt')
-            nltk.download('averaged_perceptron_tagger')
+        nltk.download('punkt')
+        nltk.download('averaged_perceptron_tagger')
 
 
         super(Enron, self).__init__(*args, **kwargs)
@@ -95,6 +90,8 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         #result_bow = result_bow.reshape(-1,1)
 
+        print('Standard dev words array length is: ' +resultstddevwords)
+        print('Standard dev sentence array length is: '+resultstddevsentence)
         #Concatenate all arrays into one final array
         result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultner))
 

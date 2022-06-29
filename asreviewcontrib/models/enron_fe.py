@@ -220,7 +220,7 @@ class Enron(BaseFeatureExtraction):
     #TODO refactor this function have it use all texts at once since otherwise it will not work
     def bag_of_words(self, texts):
         texts_copy = []
-        for text in texts_copy:
+        for text in texts:
             texts_copy = np.append(texts_copy,self.remove_numbers_phonenumbers(text))
         print(texts_copy)
         X_bow = self.vectorizer.fit_transform(texts_copy)

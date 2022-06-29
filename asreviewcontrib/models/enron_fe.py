@@ -51,6 +51,7 @@ class Enron(BaseFeatureExtraction):
 
         super(Enron, self).__init__(*args, **kwargs)
     #Todo refactor this so that no for loop is used
+    #Todo remove hardcoded array reduction
     def transform(self, texts):
         # Create numpy array of features since asreview model only works with np arrays
         resultsentiment = np.empty([0])
@@ -91,7 +92,7 @@ class Enron(BaseFeatureExtraction):
         print('Standard dev words array length is: ' ,len(resultstddevwords))
         print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, result_bow))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1595], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, result_bow))
 
         return result
 

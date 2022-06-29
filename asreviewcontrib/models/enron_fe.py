@@ -222,6 +222,7 @@ class Enron(BaseFeatureExtraction):
         texts_copy = []
         for text in texts_copy:
             texts_copy = np.append(texts_copy,self.remove_numbers_phonenumbers(text))
+        print(texts_copy)
         X_bow = self.vectorizer.fit_transform(texts_copy)
         df_bow = pd.DataFrame(X_bow.toarray(),columns=self.vectorizer.get_feature_names_out())
         try:

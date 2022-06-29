@@ -219,8 +219,10 @@ class Enron(BaseFeatureExtraction):
 
     #TODO refactor this function have it use all texts at once since otherwise it will not work
     def bag_of_words(self, texts):
-        text = self.remove_numbers_phonenumbers(text)
-        X_bow = self.vectorizer.fit_transform(texts)
+        texts_copy = []
+        for text in texts_copy:
+            texts_copy = np.append(texts_copy,self.remove_numbers_phonenumbers(text))
+        X_bow = self.vectorizer.fit_transform(texts_copy)
         df_bow = pd.DataFrame(X_bow.toarray(),columns=self.vectorizer.get_feature_names_out())
         try:
             df_bow.drop(['label'], axis=1, inplace=True)

@@ -87,7 +87,6 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = resulttypetoken.reshape(-1,1)
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
-        result_bow = result_bow.reshape(int(len(result_bow)/200),200)
 
         print('Standard dev words array length is: ' +resultstddevwords)
         print('Standard dev sentence array length is: '+resultstddevsentence)

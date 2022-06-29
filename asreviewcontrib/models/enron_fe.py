@@ -64,21 +64,26 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = np.empty([0])
         resultpropernouns = np.empty([0])
         resultpassivevoice = np.empty([0])
+        resultactivevoice = np.empty([0])
+        counter = 0 #for keeping track of progress
         for text in texts:
+            counter = counter+1
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
-            #resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
+            resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
             resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
             resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             resultreadability = np.append(resultreadability, self.readability_index(text))
             resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
+            resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
+            print('Currently at instance:', counter, '/', len(texts))
 
         result_bow = self.bag_of_words(texts)
         # Turn arrays into 2d Arrays
-        #resultner = resultner.reshape(int(len(resultner)/4),4)
+        resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
@@ -88,11 +93,12 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = resulttypetoken.reshape(-1,1)
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
+        resultactivevoice = resultactivevoice.reshape(-1,1)
 
         print('Standard dev words array length is: ' ,len(resultstddevwords))
         print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, result_bow))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultactivevoice, resultner, result_bow))
 
         return result
 
@@ -280,3 +286,8 @@ class Enron(BaseFeatureExtraction):
         passive_amount = self.passivepy.match_text(text, full_passive=True, truncated_passive=True).passive_count.iloc[0]
         sentence_amount = nltk.tokenize.sent_tokenize(text)
         return passive_amount / len(sentence_amount)
+
+    def percentage_active_voice(self, text):
+        ''' Function that caclulates what percentage of sentences in a text are written in active voice. This is done using the passivePy package.
+        '''
+        return (1 - self.percentage_passive_voice(text))

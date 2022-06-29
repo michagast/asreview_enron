@@ -67,7 +67,7 @@ class Enron(BaseFeatureExtraction):
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
-            resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
+            #resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
             resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
             resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             resultreadability = np.append(resultreadability, self.readability_index(text))
@@ -77,7 +77,7 @@ class Enron(BaseFeatureExtraction):
 
         result_bow = self.bag_of_words(texts)
         # Turn arrays into 2d Arrays
-        resultner = resultner.reshape(int(len(resultner)/4),4)
+        #resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
         resulttextlen = resulttextlen.reshape(-1,1)
         resultspecificwords = resultspecificwords.reshape(-1,1)
@@ -92,7 +92,7 @@ class Enron(BaseFeatureExtraction):
         print('Standard dev words array length is: ' +resultstddevwords)
         print('Standard dev sentence array length is: '+resultstddevsentence)
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultner, result_bow))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, result_bow))
 
         return result
 

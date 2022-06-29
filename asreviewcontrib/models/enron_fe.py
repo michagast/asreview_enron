@@ -63,7 +63,6 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = np.empty([0])
         resultpropernouns = np.empty([0])
         resultpassivevoice = np.empty([0])
-        result_bow = np.array([])
         for text in texts:
             resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
@@ -75,8 +74,8 @@ class Enron(BaseFeatureExtraction):
             resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
-            result_bow = np.append(result_bow, self.bag_of_words(text))
 
+        result_bow = self.bag_of_words(texts)
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
@@ -88,12 +87,12 @@ class Enron(BaseFeatureExtraction):
         resulttypetoken = resulttypetoken.reshape(-1,1)
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
-        result_bow = result_bow.reshape(-1,1)
+        result_bow = result_bow.reshape(int(len(result_bow)/200),200)
 
         print('Standard dev words array length is: ' +resultstddevwords)
         print('Standard dev sentence array length is: '+resultstddevsentence)
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords, resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultner, result_bow))
 
         return result
 
@@ -219,15 +218,15 @@ class Enron(BaseFeatureExtraction):
         return text
 
     #TODO refactor this function have it use all texts at once since otherwise it will not work
-    def bag_of_words(self, text):
+    def bag_of_words(self, texts):
         text = self.remove_numbers_phonenumbers(text)
-        X_bow = self.vectorizer.fit_transform(text)
+        X_bow = self.vectorizer.fit_transform(texts)
         df_bow = pd.DataFrame(X_bow.toarray(),columns=self.vectorizer.get_feature_names_out())
         try:
             df_bow.drop(['label'], axis=1, inplace=True)
         except:
             pass
-        df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:100].index.values]
+        df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:200].index.values]
         return df_bow.to_numpy()
 
     def standard_dev_sentence_length(self,text):

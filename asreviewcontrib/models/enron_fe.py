@@ -81,7 +81,7 @@ class Enron(BaseFeatureExtraction):
             resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
-        result_bow = self.bag_of_words(texts)
+        #result_bow = self.bag_of_words(texts)
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
@@ -98,7 +98,7 @@ class Enron(BaseFeatureExtraction):
         print('Standard dev words array length is: ' ,len(resultstddevwords))
         print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultactivevoice, resultner, result_bow))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultactivevoice, resultner))
 
         return result
 

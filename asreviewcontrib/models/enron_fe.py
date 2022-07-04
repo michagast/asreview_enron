@@ -33,8 +33,8 @@ class Enron(BaseFeatureExtraction):
         self._modelner.eval() # make sure model is not in training mode
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         self.vectorizer = CountVectorizer()
-        spacy_model = "en_core_web_lg"
-        self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
+        #spacy_model = "en_core_web_lg"
+        #self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
         #For use in the split into sentences function
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
@@ -42,7 +42,7 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
-        self.dictionary = enchant.Dict("en_US")
+        #self.dictionary = enchant.Dict("en_US")
 
 
         nltk.download('punkt')

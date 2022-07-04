@@ -7,10 +7,10 @@ import re                           #For performing regex
 import torch                        #For running models with cude
 import nltk.data                    #For various things
 from nltk.tag import pos_tag        #For finding proper nouns in text
-from PassivePySrc import PassivePy  #For detecting passive voice in sentences
+#from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 
 
-import enchant                      #For BagOfWords feature
+#import enchant                      #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline

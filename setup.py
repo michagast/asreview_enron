@@ -26,7 +26,6 @@ setup(
         'transformers',
         'pyenchant',
         'nltk',
-        'passivepy',
         'spacy',
         'spacy-legacy',
         'termcolor',

@@ -24,11 +24,11 @@ setup(
         'asreview>=0.13',
         'torch',
         'transformers',
-        'pyenchant',
-        'nltk',
+        #'pyenchant',
+        #'nltk',
         #'spacy',
         #'spacy-legacy',
-        'termcolor',
+        #'termcolor',
 
 
     ],

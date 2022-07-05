@@ -45,7 +45,7 @@ class Enron(BaseFeatureExtraction):
         #self.dictionary = enchant.Dict("en_US")
 
 
-        #nltk.download('punkt')
+        nltk.download('punkt')
         #nltk.download('averaged_perceptron_tagger')
 
 

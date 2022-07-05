@@ -95,11 +95,11 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
 
-        print('Standard dev words array length is: ' ,len(resultstddevwords))
-        print('Standard dev sentence array length is: ' , len(resultstddevsentence))
+        #print('Standard dev words array length is: ' ,len(resultstddevwords))
+        #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
         result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultner))
-
+        print(result.shape)
         return result
 
     def generatesentimentvalues(self, text):

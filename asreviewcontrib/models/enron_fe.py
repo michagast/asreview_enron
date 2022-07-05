@@ -77,8 +77,8 @@ class Enron(BaseFeatureExtraction):
             resultreadability = np.append(resultreadability, self.readability_index(text))
             resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
-            resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
-            resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
+            #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
+            #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
         #result_bow = self.bag_of_words(texts)
@@ -98,7 +98,7 @@ class Enron(BaseFeatureExtraction):
         print('Standard dev words array length is: ' ,len(resultstddevwords))
         print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultpassivevoice, resultactivevoice, resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resulttypetoken, resultpropernouns, resultner))
 
         return result
 

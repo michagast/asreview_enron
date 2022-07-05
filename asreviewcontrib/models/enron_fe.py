@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
-#import nltk.data                    #For various things
+import nltk.data                    #For various things
 #from nltk.tag import pos_tag        #For finding proper nouns in text
 #from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 

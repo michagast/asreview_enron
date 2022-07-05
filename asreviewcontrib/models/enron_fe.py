@@ -32,7 +32,7 @@ class Enron(BaseFeatureExtraction):
         self._modelner = AutoModelForTokenClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
         self._modelner.eval() # make sure model is not in training mode
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
-        self.vectorizer = CountVectorizer()
+        #self.vectorizer = CountVectorizer()
         #spacy_model = "en_core_web_lg"
         #self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
         #For use in the split into sentences function

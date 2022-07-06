@@ -6,8 +6,8 @@ import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
 import nltk.data                    #For various things
-from nltk.tag import pos_tag        #For finding proper nouns in text
-#from PassivePySrc import PassivePy  #For detecting passive voice in sentences
+#from nltk.tag import pos_tag        #For finding proper nouns in text
+from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 
 
 #import enchant                      #For BagOfWords feature
@@ -33,8 +33,8 @@ class Enron(BaseFeatureExtraction):
         self._modelner.eval() # make sure model is not in training mode
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         #self.vectorizer = CountVectorizer()
-        #spacy_model = "en_core_web_lg"
-        #self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
+        spacy_model = "en_core_web_lg"
+        self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
         #For use in the split into sentences function
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
@@ -46,7 +46,7 @@ class Enron(BaseFeatureExtraction):
 
 
         nltk.download('punkt')
-        nltk.download('averaged_perceptron_tagger')
+        #nltk.download('averaged_perceptron_tagger')
 
 
         super(Enron, self).__init__(*args, **kwargs)
@@ -76,8 +76,8 @@ class Enron(BaseFeatureExtraction):
             resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             resultreadability = np.append(resultreadability, self.readability_index(text))
             #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
-            resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
-            #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
+            #resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
+            resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
@@ -91,14 +91,14 @@ class Enron(BaseFeatureExtraction):
         resultstddevwords = resultstddevwords.reshape(-1,1)
         resultreadability = resultreadability.reshape(-1,1)
         #resulttypetoken = resulttypetoken.reshape(-1,1)
-        resultpropernouns = resultpropernouns.reshape(-1,1)
+        #resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
 
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpropernouns,resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice,resultner))
         print(result.shape)
         return result
 

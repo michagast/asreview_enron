@@ -74,7 +74,7 @@ class Enron(BaseFeatureExtraction):
             resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
             resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
             resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
-            #resultreadability = np.append(resultreadability, self.readability_index(text))
+            resultreadability = np.append(resultreadability, self.readability_index(text))
             #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             #resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
@@ -89,7 +89,7 @@ class Enron(BaseFeatureExtraction):
         resultspecificwords = resultspecificwords.reshape(-1,1)
         resultstddevsentence = resultstddevsentence.reshape(-1,1)
         resultstddevwords = resultstddevwords.reshape(-1,1)
-        #resultreadability = resultreadability.reshape(-1,1)
+        resultreadability = resultreadability.reshape(-1,1)
         #resulttypetoken = resulttypetoken.reshape(-1,1)
         #resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
@@ -98,7 +98,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultner))
         print(result.shape)
         return result
 

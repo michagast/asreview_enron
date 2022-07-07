@@ -10,8 +10,8 @@ import nltk.data                    #For various things
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 
 
-#import enchant                      #For BagOfWords feature
-#from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
+import enchant                      #For BagOfWords feature
+from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
 
@@ -32,7 +32,7 @@ class Enron(BaseFeatureExtraction):
         self._modelner = AutoModelForTokenClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
         self._modelner.eval() # make sure model is not in training mode
         self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
-        #self.vectorizer = CountVectorizer()
+        self.vectorizer = CountVectorizer()
         spacy_model = "en_core_web_lg"
         self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
         #For use in the split into sentences function
@@ -42,7 +42,7 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
-        #self.dictionary = enchant.Dict("en_US")
+        self.dictionary = enchant.Dict("en_US")
 
 
         nltk.download('punkt')
@@ -81,7 +81,7 @@ class Enron(BaseFeatureExtraction):
             resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
-        #result_bow = self.bag_of_words(texts)
+        result_bow = self.bag_of_words(texts)
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
         resultsentiment = resultsentiment.reshape(-1, 1)
@@ -98,7 +98,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resultner))
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, result_bow, resultner))
         print(result.shape)
         return result
 

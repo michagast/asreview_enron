@@ -24,7 +24,7 @@ setup(
         'asreview>=0.13',
         'torch',
         'transformers',
-        #'pyenchant',
+        'pyenchant',
         'nltk',
         'spacy',
         #'spacy-legacy',

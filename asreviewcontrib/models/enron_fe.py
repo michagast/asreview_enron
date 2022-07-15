@@ -271,13 +271,21 @@ class Enron(BaseFeatureExtraction):
 
             for token in np.unique(tokens):
                 tf = counter[token] / words_count
-                df = Preprocess.doc_freq(token)
+                df = self.doc_freq(token, DF)
                 idf = np.log((N + 1) / (df + 1))
 
                 tf_idf[doc, token] = tf * idf
 
             doc += 1
         return tf_idf
+
+    def doc_freq(self,word, DF):
+        c = 0
+        try:
+            c = DF[word]
+        except:
+            pass
+        return c
 
     def bag_of_words(self, texts, hash_length):
         processed_text_tf_idf = []

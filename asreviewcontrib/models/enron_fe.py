@@ -308,8 +308,7 @@ class Enron(BaseFeatureExtraction):
             BOW_df.loc[i] = BOW_values
 
         for key in tf_idf_values:
-            BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] = \
-            BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] * tf_idf_values[key]
+            BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] = BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] * tf_idf_values[key]
 
         return BOW_df.to_numpy()
 
@@ -381,7 +380,7 @@ class Enron(BaseFeatureExtraction):
         '''
         return (1 - self.percentage_passive_voice(text))
 
-    def convert_lower_case(text):
+    def convert_lower_case(self,text):
         return np.char.lower(text)
 
     def remove_stop_words(self,text):
@@ -401,7 +400,7 @@ class Enron(BaseFeatureExtraction):
         text = np.char.replace(text, ',', '')
         return text
 
-    def remove_apostrophe(sefl,text):
+    def remove_apostrophe(self,text):
         return np.char.replace(text, "'", "")
 
     def stemming(sefl,text):

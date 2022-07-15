@@ -72,7 +72,7 @@ class Enron(BaseFeatureExtraction):
         resultactivevoice = np.empty([0])
 
         #Perform bagofwords seperately
-        result_bow = self.bag_of_words(texts)
+        result_bow = self.bag_of_words(texts,500)
 
         counter = 0 #for keeping track of progress
         for text in texts:

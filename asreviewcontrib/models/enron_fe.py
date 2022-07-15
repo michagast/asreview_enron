@@ -296,8 +296,8 @@ class Enron(BaseFeatureExtraction):
         processed_text_tf_idf = []
         processed_text_bow = []
         for text in texts:
-            processed_text_tf_idf.append(word_tokenize(str(self.preprocess(self, text))))
-            processed_text_bow.append(str(self.preprocess(self, text)))
+            processed_text_tf_idf.append(word_tokenize(str(self.preprocess(text))))
+            processed_text_bow.append(str(self.preprocess(text)))
 
         tf_idf_values = self.tf_idf(processed_text_tf_idf)
 

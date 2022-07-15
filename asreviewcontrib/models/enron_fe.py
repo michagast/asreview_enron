@@ -11,7 +11,7 @@ from collections import Counter
 #from nltk.tag import pos_tag        #For finding proper nouns in text
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 from tensorflow.keras.preprocessing.text import hashing_trick
-rom nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 from num2words import num2words

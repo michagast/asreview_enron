@@ -27,7 +27,6 @@ setup(
         'pyenchant',
         'nltk',
         'spacy',
-        'collections',
         'num2words',
         'tensorflow'
         #'spacy-legacy',

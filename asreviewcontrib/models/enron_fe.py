@@ -245,7 +245,7 @@ class Enron(BaseFeatureExtraction):
         #Calculate DF for all words
         DF = {}
 
-        for i in range(N):
+        for i in range(0, N):
             tokens = texts[i]
             for w in tokens:
                 try:
@@ -266,7 +266,7 @@ class Enron(BaseFeatureExtraction):
 
         tf_idf = {}
 
-        for i in range(N):
+        for i in range(0, N):
 
             tokens = texts[i]
 

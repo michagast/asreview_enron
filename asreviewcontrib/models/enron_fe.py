@@ -240,7 +240,6 @@ class Enron(BaseFeatureExtraction):
     #TODO refactor this function have it use all texts at once since otherwise it will not work
     def tf_idf(self, texts):
         N = len(texts)
-        processed_text = []
 
 
         #Calculate DF for all words
@@ -267,9 +266,9 @@ class Enron(BaseFeatureExtraction):
 
         tf_idf = {}
 
-        for i in range():
+        for i in range(N):
 
-            tokens = processed_text[i]
+            tokens = texts[i]
 
             counter = Counter(tokens)
             words_count = len(tokens)

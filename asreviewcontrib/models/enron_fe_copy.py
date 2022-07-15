@@ -6,13 +6,8 @@ import pandas as pd                 #For data science purposes
 import re                           #For performing regex
 import torch                        #For running models with cude
 import nltk.data                    #For various things
-from nltk.tokenize import word_tokenize
-from collections import Counter
 #from nltk.tag import pos_tag        #For finding proper nouns in text
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
-from asreviewcontrib.models.Preprocess import Preprocess
-from tensorflow.keras.preprocessing.text import hashing_trick
-
 
 
 import enchant                      #For BagOfWords feature
@@ -58,36 +53,24 @@ class Enron(BaseFeatureExtraction):
     #Todo refactor this so that no for loop is used
     #Todo remove hardcoded array reduction
     def transform(self, texts):
-        # Create numpy array of features since asreview model only works with np arrays
-        resultsentiment = np.empty([0])
-        resulttextlen = np.empty([0])
-        resultspecificwords = np.empty([0])
-        resultner = np.array([])
-        resultstddevsentence = np.empty([0])
-        resultstddevwords = np.empty([0])
-        resultreadability = np.empty([0])
-        resulttypetoken = np.empty([0])
-        resultpropernouns = np.empty([0])
-        resultpassivevoice = np.empty([0])
-        resultactivevoice = np.empty([0])
-
+        result_df = pd.DataFrame()
         #Perform bagofwords seperately
         result_bow = self.bag_of_words(texts)
 
         counter = 0 #for keeping track of progress
         for text in texts:
             counter = counter+1
-            #resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
-            #resulttextlen = np.append(resulttextlen, self.gettextlength(text))
-            #resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
-            #resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
-            #resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
-            #resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
-            #resultreadability = np.append(resultreadability, self.readability_index(text))
-            #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
+            resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
+            resulttextlen = np.append(resulttextlen, self.gettextlength(text))
+            resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
+            resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
+            resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
+            resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
+            resultreadability = np.append(resultreadability, self.readability_index(text))
+            resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
             #resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
-            #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
-            #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
+            resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
+            resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
         # Turn arrays into 2d Arrays
@@ -106,8 +89,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
-        #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        result = result_bow
+        result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
         print(result.shape)
         return result
 
@@ -233,86 +215,19 @@ class Enron(BaseFeatureExtraction):
         return text
 
     #TODO refactor this function have it use all texts at once since otherwise it will not work
-    def tf_idf(self, texts):
-        N = len(texts)
-        processed_text = []
-
-
-        #Calculate DF for all words
-        DF = {}
-
-        for i in range(N):
-            tokens = texts[i]
-            for w in tokens:
-                try:
-                    DF[w].add(i)
-                except:
-                    DF[w] = {i}
-
-            tokens = texts[i]
-            for w in tokens:
-                try:
-                    DF[w].add(i)
-                except:
-                    DF[w] = {i}
-        for i in DF:
-            DF[i] = len(DF[i])
-
-        doc = 0
-
-        tf_idf = {}
-
-        for i in range():
-
-            tokens = processed_text[i]
-
-            counter = Counter(tokens)
-            words_count = len(tokens)
-
-            for token in np.unique(tokens):
-                tf = counter[token] / words_count
-                df = Preprocess.doc_freq(token)
-                idf = np.log((N + 1) / (df + 1))
-
-                tf_idf[doc, token] = tf * idf
-
-            doc += 1
-        return tf_idf
-
-    def bag_of_words(self, texts, hash_length):
-        processed_text_tf_idf = []
-        processed_text_bow = []
+    def bag_of_words(self, texts):
+        texts_copy = []
         for text in texts:
-            processed_text_tf_idf.append(word_tokenize(str(Preprocess.preprocess(text))))
-            processed_text_bow.append(str(Preprocess.preprocess(text)))
-
-        tf_idf_values = self.tf_idf(processed_text_tf_idf)
-
-        BOW_df = pd.DataFrame(columns=[str(i) for i in range(0, hash_length)])
-
-        for i in range(0,len(processed_text_bow)):
-            BOW_values = self.Hashed_BOW(processed_text_bow[i], hash_length+1)
-            BOW_df.loc[i] = BOW_values
-
-        for key in tf_idf_values:
-            BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] = \
-            BOW_df[str(hashing_trick(key[1], hash_length, lower=True)[0])].iloc[key[0]] * tf_idf_values[key]
-
-        return BOW_df.to_numpy()
-
-    def Hashed_BOW(self, text, length):
-        bow_array = [0] * length
-        hashes = hashing_trick(
-            text,
-            length,
-            filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
-            lower=True,
-            split=' ',
-            analyzer=None)
-        for hash_ in hashes:
-            bow_array[hash_] = bow_array[hash_] + 1
-
-        return bow_array[0:length - 1]
+            texts_copy = np.append(texts_copy,self.remove_numbers_phonenumbers(text))
+        print(texts_copy)
+        X_bow = self.vectorizer.fit_transform(texts_copy)
+        df_bow = pd.DataFrame(X_bow.toarray(),columns=self.vectorizer.get_feature_names_out())
+        try:
+            df_bow.drop(['label'], axis=1, inplace=True)
+        except:
+            pass
+        df_bow= df_bow[df_bow.sum(axis=0).sort_values(ascending=False)[0:200].index.values]
+        return df_bow.to_numpy()
 
     def standard_dev_sentence_length(self,text):
         ''' Function that calulates the standard deviation of the length of all the sentences in a text.

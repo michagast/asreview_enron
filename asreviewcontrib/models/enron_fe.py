@@ -226,15 +226,10 @@ class Enron(BaseFeatureExtraction):
     def remove_numbers_phonenumbers(self,text):
         ''' Function that remove specific sequences of numbers from a text so that they are not seen as words by the BagofWords feature.
         '''
-        text = re.sub(r'\b([0-9]{3}-[0-9]{3}-[0-9]{4})\b', '', text) #Remove US phone numbers
+        text = re.sub(r'\b([0-9]{3}-[0-9]{3}-[0-9]{4})\b', '', str(text)) #Remove US phone numbers
         text = re.sub(r'\b([0-1][0-9]\/[0-3][0-9]\/[0-9]{4})\b', '', text) #Removes dates
         text = re.sub(r'\b([0-1]?[0-9]):[0-5][0-9]\b', '', text) #Removes timestamps
         text = re.sub(r'\b\w*\d\w*\b', '', text) #Removes single whitespaces
-        text = re.sub(r'\b ?[0-9]+ \b', '', text) #Removes remaining numbers
-        splits = text.split()
-        for word in splits:
-            if not self.dictionary.check(word):
-                text = text.replace(word, '')
         return text
 
     #TODO refactor this function have it use all texts at once since otherwise it will not work

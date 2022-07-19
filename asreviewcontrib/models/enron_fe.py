@@ -8,7 +8,7 @@ import torch                        #For running models with cude
 import nltk.data                    #For various things
 from nltk.tokenize import word_tokenize
 from collections import Counter
-#from nltk.tag import pos_tag        #For finding proper nouns in text
+from nltk.tag import pos_tag        #For finding proper nouns in text
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 from tensorflow.keras.preprocessing.text import hashing_trick
 from nltk.tokenize import word_tokenize
@@ -56,7 +56,7 @@ class Enron(BaseFeatureExtraction):
 
         nltk.download('punkt')
         nltk.download('stopwords')
-        #nltk.download('averaged_perceptron_tagger')
+        nltk.download('averaged_perceptron_tagger')
 
 
         super(Enron, self).__init__(*args, **kwargs)
@@ -77,20 +77,20 @@ class Enron(BaseFeatureExtraction):
         resultactivevoice = np.empty([0])
 
         #Perform bagofwords seperately
-        result_bow = self.bag_of_words(texts,500)
+        result_bow = self.bag_of_words(texts,1001)
 
         counter = 0 #for keeping track of progress
         for text in texts:
             counter = counter+1
             #resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
-            #resulttextlen = np.append(resulttextlen, self.gettextlength(text))
+            resulttextlen = np.append(resulttextlen, self.gettextlength(text))
             #resultspecificwords = np.append(resultspecificwords, self.specific_words_check(text))
             #resultner = np.append(resultner, self.generate_named_entities(text), axis = 0)
             #resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
             #resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             #resultreadability = np.append(resultreadability, self.readability_index(text))
             #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
-            #resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
+            resultpropernouns = np.append(resultpropernouns, self.type_token_ratio(text))
             #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
@@ -112,7 +112,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        result = result_bow
+        result = np.hstack(resulttextlen, resultpropernouns,result_bow)
         print(result.shape)
         return result
 
@@ -303,7 +303,7 @@ class Enron(BaseFeatureExtraction):
         BOW_df = pd.DataFrame(columns=[str(i) for i in range(0, hash_length)])
 
         for i in range(0,len(processed_text_bow)):
-            BOW_values = self.Hashed_BOW(processed_text_bow[i], hash_length+1)
+            BOW_values = self.Hashed_BOW(processed_text_bow[i], hash_length)
             BOW_df.loc[i] = BOW_values
 
         for key in tf_idf_values:
@@ -382,6 +382,10 @@ class Enron(BaseFeatureExtraction):
     def convert_lower_case(self,text):
         return np.char.lower(text)
 
+    def remove_email_adresses(self, text):
+        text = re.sub(r'\S*@\S*\s?', '', str(text))
+        return text
+
     def remove_stop_words(self,text):
         stop_words = stopwords.words('english')
         words = word_tokenize(str(text))
@@ -423,15 +427,28 @@ class Enron(BaseFeatureExtraction):
         new_text = np.char.replace(new_text, "-", " ")
         return new_text
 
+    def remove_random_words(self, data):
+        data = str(data)
+        data = re.sub(r'\b(USL)?(usl)?\b', '', data)
+        data = re.sub(r'\b(\.((DOC)?(doc)?))\b', '', data)
+        data = re.sub(r'\b(e-mail)\b', '', data)
+        data = re.sub(r'(\<div\>)', '', data)
+        data = re.sub(r'(\<br\>)', '', data)
+        data = re.sub(r'(.*?\.[\w:]+)', '', data)
+        data = re.sub(r'\[image\]', '', data)
+        return data
+
     def preprocess(self,text):
         text = self.convert_lower_case(text)
+        text = self.remove_email_adresses(text)
+        text = self.remove_random_words(text)
         text = self.remove_punctuation(text)  # remove comma seperately
         text = self.remove_apostrophe(text)
         text = self.remove_stop_words(text)
-        text = self.convert_numbers(text)
+        text = self.remove_numbers_phonenumbers(text)
         text = self.stemming(text)
         text = self.remove_punctuation(text)
-        text = self.convert_numbers(text)
+        text = self.remove_numbers_phonenumbers(text)
         text = self.stemming(text)  # needed again as we need to stem the words
         text = self.remove_punctuation(text)  # needed again as num2word is giving few hypens and commas fourty-one
         text = self.remove_stop_words(text)  # needed again as num2word is giving stop words 101 - one hundred and one

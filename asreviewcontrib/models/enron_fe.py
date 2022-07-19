@@ -318,7 +318,7 @@ class Enron(BaseFeatureExtraction):
         for hash_ in hashes:
             bow_array[hash_] = bow_array[hash_] + 1
 
-        return bow_array[0:length - 1]
+        return bow_array[0:length]
 
     def standard_dev_sentence_length(self,text):
         ''' Function that calulates the standard deviation of the length of all the sentences in a text.

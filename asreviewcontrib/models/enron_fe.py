@@ -112,7 +112,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        result = np.hstack(resulttextlen, resultpropernouns, resultpassivevoice, result_bow)
+        result = np.hstack((resulttextlen, resultpropernouns, resultpassivevoice, result_bow))
         print(result.shape)
         return result
 

@@ -79,7 +79,7 @@ class Enron(BaseFeatureExtraction):
 
         counter1 = 0
         for text in texts:
-            texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
+            texts[counter1] = ' '.join(text.split()[1:len(text.split())])
             counter1 += 1
 
 
@@ -418,7 +418,7 @@ class Enron(BaseFeatureExtraction):
     def remove_apostrophe(self,text):
         return np.char.replace(text, "'", "")
 
-    def stemming(sefl,text):
+    def stemming(self,text):
         stemmer = PorterStemmer()
 
         tokens = word_tokenize(str(text))

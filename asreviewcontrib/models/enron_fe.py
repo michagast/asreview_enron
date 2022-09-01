@@ -114,10 +114,10 @@ class Enron(BaseFeatureExtraction):
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
-        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
+        #with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
             # A new file will be created
-            pickle.dump(result, file)
-            print("Succesfully saved feature_matrix")
+           #pickle.dump(result, file)
+            #print("Succesfully saved feature_matrix")
         with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts.pkl', 'wb') as file:
             # A new file will be created
             pickle.dump(texts, file)

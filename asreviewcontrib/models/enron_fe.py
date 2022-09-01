@@ -264,13 +264,6 @@ class Enron(BaseFeatureExtraction):
                     DF[w].add(i)
                 except:
                     DF[w] = {i}
-
-            tokens = texts[i]
-            for w in tokens:
-                try:
-                    DF[w].add(i)
-                except:
-                    DF[w] = {i}
         for i in DF:
             DF[i] = len(DF[i])
 

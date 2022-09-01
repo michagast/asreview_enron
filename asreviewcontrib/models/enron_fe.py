@@ -77,6 +77,10 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
 
+        counter1 = 0
+        for text in texts:
+            texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
+            counter1 += 1
 
 
         counter = 0 #for keeping track of progress

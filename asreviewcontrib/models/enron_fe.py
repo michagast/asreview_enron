@@ -310,8 +310,16 @@ class Enron(BaseFeatureExtraction):
             processed_text_tf_idf.append(word_tokenize(str(self.preprocess(text))))
             processed_text_bow.append(str(self.preprocess(text)))
 
-        tf_idf_values = self.tf_idf(processed_text_tf_idf)
 
+        tf_idf_values = self.tf_idf(processed_text_tf_idf)
+        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\tf_idfvalues.pkl', 'wb') as file:
+            # A new file will be created
+            pickle.dump(tf_idf_values, file)
+            print("Succesfully saved tfidf")
+        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\processedtext.pkl', 'wb') as file:
+            # A new file will be created
+            pickle.dump(processed_text_bow, file)
+            print("Succesfully saved processed_texts")
         BOW_df = pd.DataFrame(columns=[str(i) for i in range(0, hash_length)])
 
         for i in range(0,len(processed_text_bow)):

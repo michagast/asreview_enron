@@ -124,14 +124,14 @@ class Enron(BaseFeatureExtraction):
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
         with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
             # A new file will be created
-            pickle.dump(resulttextlen, file)
+            pickle.dump(result, file)
             print("Succesfully saved feature_matrix")
         with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts_old.pkl', 'wb') as file:
             # A new file will be created
             pickle.dump(texts, file)
             print("Succesfully saved texts")
         #print(result.shape)
-        return resulttextlen
+        return result
 
     def generatesentimentvalues(self, text):
         ''' Function that generates the sentiment value for the specific text

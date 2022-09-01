@@ -77,15 +77,15 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
 
-        counter1 = 0
-        for text in texts:
-            texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
-            counter1 += 1
+        #counter1 = 0
+        #for text in texts:
+            #texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
+            #counter1 += 1
 
 
         counter = 0 #for keeping track of progress
         for text in texts:
-            text = ' '.join(text.split()[1:len(text.split())])
+            #text = ' '.join(text.split()[1:len(text.split())])
 
             counter = counter+1
             #resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
@@ -126,7 +126,7 @@ class Enron(BaseFeatureExtraction):
             # A new file will be created
             pickle.dump(resulttextlen, file)
             print("Succesfully saved feature_matrix")
-        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts.pkl', 'wb') as file:
+        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts_old.pkl', 'wb') as file:
             # A new file will be created
             pickle.dump(texts, file)
             print("Succesfully saved texts")

@@ -117,7 +117,11 @@ class Enron(BaseFeatureExtraction):
         with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
             # A new file will be created
             pickle.dump(result, file)
-            print("Succesfully saved model")
+            print("Succesfully saved feature_matrix")
+        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts.pkl', 'wb') as file:
+            # A new file will be created
+            pickle.dump(texts, file)
+            print("Succesfully saved texts")
         print(result.shape)
         return result
 

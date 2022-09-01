@@ -77,10 +77,10 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
 
-        #counter1 = 0
-        #for text in texts:
-            #texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
-            #counter1 += 1
+        counter1 = 0
+        for text in texts:
+            texts[counter1] = text = ' '.join(text.split()[1:len(text.split())])
+            counter1 += 1
 
 
         counter = 0 #for keeping track of progress
@@ -96,13 +96,13 @@ class Enron(BaseFeatureExtraction):
             #resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             #resultreadability = np.append(resultreadability, self.readability_index(text))
             #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
-            #resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
-            #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
+            resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
+            resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately
-        # result_bow = self.bag_of_words(texts,501)
+        result_bow = self.bag_of_words(texts,501)
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
@@ -121,7 +121,7 @@ class Enron(BaseFeatureExtraction):
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        #result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
+        result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
         with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
             # A new file will be created
             pickle.dump(resulttextlen, file)

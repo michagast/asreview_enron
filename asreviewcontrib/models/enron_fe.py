@@ -77,11 +77,12 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
 
-        #Perform bagofwords seperately
-        #result_bow = self.bag_of_words(texts,501)
+
 
         counter = 0 #for keeping track of progress
         for text in texts:
+            text = ' '.join(text.split()[1:len(text.split())])
+
             counter = counter+1
             #resultsentiment = np.append(resultsentiment, self.generatesentimentvalues(text))
             resulttextlen = np.append(resulttextlen, self.gettextlength(text))
@@ -95,6 +96,9 @@ class Enron(BaseFeatureExtraction):
             #resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
+
+        # Perform bagofwords seperately
+        # result_bow = self.bag_of_words(texts,501)
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)

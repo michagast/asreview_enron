@@ -102,7 +102,7 @@ class Enron(BaseFeatureExtraction):
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately
-        result_bow = self.bag_of_words(texts,501)
+        result_bow = self.bag_of_words(texts,1001)
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
@@ -122,15 +122,7 @@ class Enron(BaseFeatureExtraction):
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
-        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\feature_matrix.pkl', 'wb') as file:
-            # A new file will be created
-            pickle.dump(result, file)
-            print("Succesfully saved feature_matrix")
-        with open(r'C:\Users\MichaG\Documents\Scriptie\ASReview\texts_old.pkl', 'wb') as file:
-            # A new file will be created
-            pickle.dump(texts, file)
-            print("Succesfully saved texts")
-        #print(result.shape)
+        print(result.shape)
         return result
 
     def generatesentimentvalues(self, text):
@@ -249,6 +241,13 @@ class Enron(BaseFeatureExtraction):
         text = re.sub(r'\b\w*\d\w*\b', '', text) #Removes single whitespaces
         return text
 
+    def doc_freq(self, word, DF):
+        c = 0
+        try:
+            c = DF[word]
+        except:
+            pass
+        return c
     #TODO refactor this function have it use all texts at once since otherwise it will not work
     def tf_idf(self, texts):
         N = len(texts)
@@ -264,6 +263,7 @@ class Enron(BaseFeatureExtraction):
                     DF[w].add(i)
                 except:
                     DF[w] = {i}
+
         for i in DF:
             DF[i] = len(DF[i])
 
@@ -287,14 +287,6 @@ class Enron(BaseFeatureExtraction):
 
             doc += 1
         return tf_idf
-
-    def doc_freq(self,word, DF):
-        c = 0
-        try:
-            c = DF[word]
-        except:
-            pass
-        return c
 
     def bag_of_words(self, texts, hash_length):
         processed_text_tf_idf = []

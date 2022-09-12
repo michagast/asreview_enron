@@ -100,7 +100,7 @@ class Enron(BaseFeatureExtraction):
             resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
-            resultbow = np.append(resultbow, self.bag_of_words(text))
+            resultbow = np.append(resultbow, self.bag_of_words(text, 1001))
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately

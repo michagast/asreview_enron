@@ -76,6 +76,7 @@ class Enron(BaseFeatureExtraction):
         resultpropernouns = np.empty([0])
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
+        resultbow = np.array([])
 
         counter1 = 0
         for text in texts:
@@ -99,10 +100,10 @@ class Enron(BaseFeatureExtraction):
             resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
+            resultbow = np.append(resultbow, self.bag_of_words(text))
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately
-        result_bow = self.bag_of_words(texts,1001)
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
@@ -116,6 +117,7 @@ class Enron(BaseFeatureExtraction):
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
+        resultner = resultner.reshape(int(len(resultbow) / 1001), 1001)
 
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))

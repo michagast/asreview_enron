@@ -100,10 +100,11 @@ class Enron(BaseFeatureExtraction):
             resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
-            resultbow = np.append(resultbow, self.bag_of_words(text, 1001))
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately
+        result_bow = self.bag_of_words(texts, 1001)
+
 
         # Turn arrays into 2d Arrays
         resultner = resultner.reshape(int(len(resultner)/4),4)
@@ -117,15 +118,17 @@ class Enron(BaseFeatureExtraction):
         resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
-        resultner = resultner.reshape(int(len(resultbow) / 1001), 1001)
 
         #print('Standard dev words array length is: ' ,len(resultstddevwords))
         #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
-        print(result.shape)
-        return result
+        #import holdout indices
+        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xlsx')
+        result_noholdout = np.delete(result, holdout.index.values, axis = 0)
+        print(result_noholdout.shape)
+        return result_noholdout
 
     def generatesentimentvalues(self, text):
         ''' Function that generates the sentiment value for the specific text

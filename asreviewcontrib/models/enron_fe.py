@@ -76,7 +76,6 @@ class Enron(BaseFeatureExtraction):
         resultpropernouns = np.empty([0])
         resultpassivevoice = np.empty([0])
         resultactivevoice = np.empty([0])
-        resultbow = np.array([])
 
         counter1 = 0
         for text in texts:

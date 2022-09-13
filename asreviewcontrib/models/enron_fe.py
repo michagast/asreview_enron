@@ -125,10 +125,8 @@ class Enron(BaseFeatureExtraction):
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
         #import holdout indices
-        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xlsx')
-        result_noholdout = np.delete(result, holdout.index.values, axis = 0)
-        print(result_noholdout.shape)
-        return result_noholdout
+
+        return result
 
     def generatesentimentvalues(self, text):
         ''' Function that generates the sentiment value for the specific text

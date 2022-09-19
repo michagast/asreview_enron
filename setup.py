@@ -18,10 +18,9 @@ setup(
     ],
     keywords='systematic review',
     packages=find_namespace_packages(include=['asreviewcontrib.*']),
-    python_requires='~=3.6',
+    python_requires='~=3.9',
     install_requires=[
         'sklearn',
-        'asreview>=0.13',
         'torch',
         'transformers',
         'pyenchant',

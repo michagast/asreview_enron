@@ -102,7 +102,7 @@ class Enron(BaseFeatureExtraction):
             print('Currently at instance:', counter, '/', len(texts))
 
         # Perform bagofwords seperately
-        #result_bow = self.bag_of_words(texts, 1001)
+        result_bow = self.bag_of_words(texts, 1001)
 
 
         # Turn arrays into 2d Arrays
@@ -118,11 +118,14 @@ class Enron(BaseFeatureExtraction):
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
 
-        #print('Standard dev words array length is: ' ,len(resultstddevwords))
-        #print('Standard dev sentence array length is: ' , len(resultstddevsentence))
+
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns))
+        result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
+
+        #load in holdout data
+        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xslx')
+        result.drop([holdout.index.values], axis=0, inplace=True)
         print(result.shape)
         return result
 

@@ -124,7 +124,7 @@ class Enron(BaseFeatureExtraction):
         result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
 
         #load in holdout data
-        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xslx')
+        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xlsx')
         result.drop([holdout.index.values], axis=0, inplace=True)
         print(result.shape)
         return result

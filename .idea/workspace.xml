@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f96786d4-99f3-4526-ab77-798940b48eca" name="Changes" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/asreviewcontrib/models/enron_fe.py" beforeDir="false" afterPath="$PROJECT_DIR$/asreviewcontrib/models/enron_fe.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

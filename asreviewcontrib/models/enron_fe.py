@@ -125,7 +125,7 @@ class Enron(BaseFeatureExtraction):
 
         #load in holdout data
         holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xlsx')
-        result = np.delete(result, holdout.index.values, axis = 0)
+        #result = np.delete(result, holdout.index.values, axis = 0)
         print(result.shape)
         return result
 

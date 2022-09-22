@@ -95,14 +95,15 @@ class Enron(BaseFeatureExtraction):
             #resultstddevsentence = np.append(resultstddevsentence, self.standard_dev_sentence_length(text))
             #resultstddevwords = np.append(resultspecificwords, self.standard_dev_word_length(text))
             #resultreadability = np.append(resultreadability, self.readability_index(text))
-            #resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
-            resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
+            resulttypetoken = np.append(resulttypetoken, self.type_token_ratio(text))
+            #resultpropernouns = np.append(resultpropernouns, self.proper_nouns(text))
             resultpassivevoice = np.append(resultpassivevoice, self.percentage_passive_voice(text))
             #resultactivevoice = np.append(resultactivevoice, self.percentage_active_voice(text))
             print('Currently at instance:', counter, '/', len(texts))
 
-        # Perform bagofwords seperately
-        result_bow = self.bag_of_words(texts, 1001)
+        # load in bag of words data
+        resultbow = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\bowdf1001.xlsx', index_col=[0])
+        resultbow = resultbow.to_numpy()
 
 
         # Turn arrays into 2d Arrays
@@ -114,19 +115,15 @@ class Enron(BaseFeatureExtraction):
         resultstddevwords = resultstddevwords.reshape(-1,1)
         resultreadability = resultreadability.reshape(-1,1)
         resulttypetoken = resulttypetoken.reshape(-1,1)
-        resultpropernouns = resultpropernouns.reshape(-1,1)
+        #resultpropernouns = resultpropernouns.reshape(-1,1)
         resultpassivevoice = resultpassivevoice.reshape(-1,1)
         resultactivevoice = resultactivevoice.reshape(-1,1)
 
 
         #Concatenate all arrays into one final array
         #result = np.hstack((resultsentiment, resulttextlen, resultspecificwords, resultstddevsentence, resultstddevwords[0:1596], resultreadability, resultpassivevoice, resultactivevoice, resulttypetoken, result_bow, resultner))
-        result = np.hstack((resulttextlen, resultpassivevoice, resultpropernouns, result_bow))
-
-        #load in holdout data
-        holdout = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\enron_holdoutdata.xlsx', index_col=[0])
-        result = np.delete(result, holdout.index.values, axis = 0)
-        print(result.shape)
+        result = np.hstack((resulttextlen, resultpassivevoice, resulttypetoken, resultbow))
+        print(result.shape[0])
         return result
 
     def generatesentimentvalues(self, text):

@@ -36,8 +36,8 @@ class Enron(BaseFeatureExtraction):
     def __init__(self, *args, **kwargs):
         #Load in all required thing from packages.
         self.vectorizer = CountVectorizer()
-        spacy_model = "en_core_web_lg"
-        self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
+
+        self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model = "en_core_web_lg")
         #For use in the split into sentences function
         self.alphabets = "([A-Za-z])"
         self.prefixes = "(Mr|St|Mrs|Ms|Dr)[.]"
@@ -95,7 +95,7 @@ class Enron(BaseFeatureExtraction):
             print('Currently at instance:', counter, '/', len(texts))
 
         # load in bag of words data
-        resultbow = pd.read_excel(r'C:\Users\MichaG\Documents\Scriptie\Data-main\bowdf1001.xlsx', index_col=[0])
+        resultbow = pd.read_excel(r'H:\Scriptie MBI\Scriptie\Data-main\bowdf1001_falsify.xlsx', index_col=[0])
         resultbow = resultbow.to_numpy()
 
 

@@ -36,12 +36,6 @@ class Enron(BaseFeatureExtraction):
 
     def __init__(self, *args, **kwargs):
         #Load in all required thing from packages.
-        self._model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        self._model.eval() #make sure model is not in training mode
-        self._tokenizernlp = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
-        self._modelner = AutoModelForTokenClassification.from_pretrained("xlm-roberta-large-finetuned-conll03-english", return_dict=True)
-        self._modelner.eval() # make sure model is not in training mode
-        self._tokenizerner = AutoTokenizer.from_pretrained('xlm-roberta-large-finetuned-conll03-english')
         self.vectorizer = CountVectorizer()
         spacy_model = "en_core_web_lg"
         self.passivepy = PassivePy.PassivePyAnalyzer(spacy_model)
@@ -52,7 +46,7 @@ class Enron(BaseFeatureExtraction):
         self.starters = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
         self.acronyms = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
         self.websites = "[.](com|net|org|io|gov)"
-        self.dictionary = enchant.Dict("en_US")
+        #self.dictionary = enchant.Dict("en_US")
 
 
         nltk.download('punkt')

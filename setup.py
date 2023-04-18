@@ -22,14 +22,10 @@ setup(
     install_requires=[
         'sklearn',
         'torch',
-        'transformers',
-        'pyenchant',
         'nltk',
         'spacy',
         'num2words',
         'tensorflow'
-        #'spacy-legacy',
-        #'termcolor',
 
 
     ],

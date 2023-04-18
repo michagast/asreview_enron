@@ -8,7 +8,7 @@ import torch                        #For running models with cude
 import nltk.data                    #For various things
 from nltk.tokenize import word_tokenize
 from collections import Counter
-from nltk.tag import pos_tag        #For finding proper nouns in text
+# nltk.tag import pos_tag        #For finding proper nouns in text
 from PassivePySrc import PassivePy  #For detecting passive voice in sentences
 from tensorflow.keras.preprocessing.text import hashing_trick
 from nltk.tokenize import word_tokenize
@@ -22,7 +22,7 @@ import pickle
                     #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
+#from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
 
 class Enron(BaseFeatureExtraction):
     """Custom feature extraction

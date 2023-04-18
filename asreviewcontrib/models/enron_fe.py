@@ -19,8 +19,7 @@ import pickle
 
 
 
-
-import enchant                      #For BagOfWords feature
+                    #For BagOfWords feature
 from sklearn.feature_extraction.text import CountVectorizer #For BagOfWords feature
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
